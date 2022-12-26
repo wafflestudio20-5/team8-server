@@ -151,5 +151,5 @@ AUTHENTICATION_BACKENDS = [
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
-
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 SITE_ID = 1
