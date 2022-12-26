@@ -20,7 +20,7 @@ from account import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')),
+    path('user/', include('snu_student.urls')),
     path('rest-auth/kakao/', views.KakaoLogin.as_view(), name='kakao'),
     path('rest-auth/naver/', views.NaverLogin.as_view(), name='naver'),
     path('rest-auth/google/', views.GoogleLogin.as_view(), name='google'),
