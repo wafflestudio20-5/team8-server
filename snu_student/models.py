@@ -1,24 +1,27 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+import jwt
+from datetime import datetime, timedelta
+from django.conf import settings
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, name, password=None):
-        if not username:
-            raise ValueError('must have user username')
+    def create_user(self, email, name, password=None):
+        if not email:
+            raise ValueError('must have user email')
         if not name:
             raise ValueError('must have user name')
         user = self.model(
-            username=self.normalize_email(username),
+            email=self.normalize_email(email),
             name=name
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, name, password=None):
+    def create_superuser(self, email, name, password=None):
         user = self.create_user(
-            username,
+            email,
             password=password,
             name=name
         )
@@ -30,7 +33,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.AutoField(primary_key=True)
-    username = models.EmailField(default='', max_length=100, null=False, blank=False, unique=True)
+    email = models.EmailField(default='', max_length=100, null=False, blank=False, unique=True)
     name = models.CharField(default='', max_length=100, null=False, blank=False)
 
     is_active = models.BooleanField(default=True)
@@ -39,8 +42,22 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
 
+    @property
+    def token(self):
+        return self._generate_jwt_token()
+
+    def _generate_jwt_token(self):
+        dt = datetime.now() + timedelta(days=60)  # expiration time
+
+        token = jwt.encode({
+            'id': self.pk,
+            'exp': dt.utcfromtimestamp(dt.timestamp())
+        }, settings.SECRET_KEY, algorithm='HS256')
+
+        return token
+
     def __str__(self):
-        return self.username
+        return self.email
