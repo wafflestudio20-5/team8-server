@@ -7,6 +7,7 @@ cryptography==38.0.4
 defusedxml==0.7.1
 Django==4.1.4
 django-allauth==0.51.0
+django-cors-headers==3.13.0
 django-rest-auth==0.9.5
 django-rest-auth-forked==0.9.5
 djangorestframework==3.14.0
@@ -27,3 +28,4 @@ style==1.1.0
 tzdata==2022.7
 update==0.0.1
 urllib3==1.26.13
+uWSGI==2.0.21
