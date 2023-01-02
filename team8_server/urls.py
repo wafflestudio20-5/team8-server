@@ -27,4 +27,5 @@ urlpatterns = [
     path('rest-auth/google/', views.GoogleLogin.as_view(), name='google'),
     path('rest-auth/github/', views.GithubLogin.as_view(), name='github'),
     path('accounts/', include('allauth.urls')),
+    path('lectures/', include('snu_course.urls')),
 ]
