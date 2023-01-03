@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import MinValueValidator, RegexValidator
 
+from snu_student.models import User
+
 
 class Course(models.Model):
     class_number_validator = RegexValidator(regex=r'^[0-9]{3}$')
@@ -25,3 +27,34 @@ class Course(models.Model):
     cart = models.IntegerField(default=0, blank=True)
     rate = models.IntegerField(null=True)
     # parsed_time
+
+
+class Review(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    updated_at = models.DateTimeField(null=True, blank=True)
+    is_updated = models.BooleanField(default=False)
+
+#    published_at = models.DateTimeField(null=True, blank=True)
+#    is_published = models.BooleanField(default=False)
+
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+
+    rate = models.IntegerField(null=True, blank=True)
+    semester = models.CharField(max_length=100, null=True, blank=True)
+
+
+class Comment(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    updated_at = models.DateTimeField(null=True, blank=True)
+    is_updated = models.BooleanField(default=False)
+
+    content = models.TextField()
