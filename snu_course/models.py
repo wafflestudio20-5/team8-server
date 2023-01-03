@@ -58,3 +58,4 @@ class Comment(models.Model):
     is_updated = models.BooleanField(default=False)
 
     content = models.TextField()
+
