@@ -3,6 +3,16 @@ from django.core.validators import MinValueValidator, RegexValidator
 
 from snu_student.models import User
 
+DAYS_OF_WEEK = (
+    (0, 'Monday'),
+    (1, 'Tuesday'),
+    (2, 'Wednesday'),
+    (3, 'Thursday'),
+    (4, 'Friday'),
+    (5, 'Saturday'),
+    (6, 'Sunday'),
+)
+
 
 class Course(models.Model):
     class_number_validator = RegexValidator(regex=r'^[0-9]{3}$')
@@ -27,6 +37,13 @@ class Course(models.Model):
     cart = models.IntegerField(default=0, blank=True)
     rate = models.IntegerField(null=True)
     # parsed_time
+
+
+class TimeInfo(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    day = models.CharField(max_length=1, choices=DAYS_OF_WEEK)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
 
 
 class Review(models.Model):

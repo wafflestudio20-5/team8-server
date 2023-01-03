@@ -1,7 +1,10 @@
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics
-from .serializers import CourseListSerializer, ReviewListSerializer
-from .models import Course, Review
+from .serializers import CourseListSerializer, ReviewListSerializer, ReviewDetailSerializer, CommentListSerializer, \
+    CommentDetailSerializer
+from .models import Course, Review, Comment
 
 
 class CourseList(generics.ListAPIView):
@@ -12,15 +15,74 @@ class CourseList(generics.ListAPIView):
 class ReviewListCreateView(generics.ListCreateAPIView):
     queryset = Review.objects.all().order_by('-created_at')
     serializer_class = ReviewListSerializer
-    queryset = Review.objects.all().order_by('-created_at')
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        request.data['created_by'] = request.user.id
+        request.data['course'] = kwargs['id']
         request.data['created_at'] = timezone.now()
-        request.data['updated_at'] = timezone.now()
-        request.data['course'] = kwargs['rid']
 
         return super().post(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+
+class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all().order_by('-created_at')
+    serializer_class = ReviewDetailSerializer
+
+    def get_object(self):
+        return get_object_or_404(Review, id=self.kwargs['rid'])
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        request.data['course'] = kwargs['id']
+        request.data['updated_at'] = timezone.now()
+        request.data['is_updated'] = True
+
+        return super().update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return super().delete(request, *args, **kwargs)
+
+
+class CommentListCreateView(generics.ListCreateAPIView):
+    queryset = Comment.objects.all().order_by('-created_at')
+    serializer_class = CommentListSerializer
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        request.data['review'] = kwargs['rid']
+        request.data['created_at'] = timezone.now()
+
+        return super().post(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+
+class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Comment.objects.all().order_by('-created_at')
+    serializer_class = CommentDetailSerializer
+
+    def get_object(self):
+        return get_object_or_404(Comment, id=self.kwargs['cid'])
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        request.data['review'] = kwargs['rid']
+        request.data['updated_at'] = timezone.now()
+        request.data['is_updated'] = True
+
+        return super().update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return super().delete(request, *args, **kwargs)
