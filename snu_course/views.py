@@ -1,8 +1,9 @@
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics
+from rest_framework.response import Response
 
+from .pagination import CoursePagination
 from .permissions import IsSafeOrAuthorizedUser, IsCreator, IsSafeOrAdminUser
 from .serializers import CourseListSerializer, ReviewListSerializer, ReviewDetailSerializer, CommentListSerializer, \
     CommentDetailSerializer, CourseDetailSerializer
@@ -12,7 +13,8 @@ from .models import Course, Review, Comment
 class CourseListCreateView(generics.ListCreateAPIView):
     queryset = Course.objects.all().prefetch_related('review_set').order_by('name')
     serializer_class = CourseListSerializer
-    permission_classes = [IsSafeOrAdminUser]
+    permission_classes = [IsSafeOrAuthorizedUser]
+    pagination_class = CoursePagination
 
 
 class CourseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
@@ -32,7 +34,20 @@ class ReviewListCreateView(generics.ListCreateAPIView):
     serializer_class = ReviewListSerializer
 
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        for serialized_review in serializer.data:
+            if request.user.is_anonymous or serialized_review['created_by'] != request.user.name:
+                serialized_review['created_by'] = None
+
+        return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
         request.data['course'] = kwargs['id']
@@ -55,7 +70,15 @@ class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return obj
 
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        serialized_review = serializer.data
+
+        if request.user.is_anonymous or serialized_review['created_by'] != request.user.name:
+            serialized_review['created_by'] = None
+
+        return Response(serialized_review)
 
     def update(self, request, *args, **kwargs):
         request.data['course'] = kwargs['id']
@@ -74,7 +97,22 @@ class CommentListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsSafeOrAuthorizedUser]
 
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        for serialized_comment in serializer.data:
+            if request.user.is_anonymous:
+                serialized_comment['created_by'] = None
+            elif serialized_comment['created_by'] != request.user.name:
+                serialized_comment['created_by'] = None
+
+        return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
         request.data['review'] = kwargs['rid']
@@ -97,7 +135,14 @@ class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return obj
 
     def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        serialized_comment = serializer.data
+
+        if request.user.is_anonymous or serialized_comment['created_by'] != request.user.name:
+            serialized_comment['created_by'] = None
+
+        return Response(serialized_comment)
 
     def update(self, request, *args, **kwargs):
         request.data['review'] = kwargs['rid']

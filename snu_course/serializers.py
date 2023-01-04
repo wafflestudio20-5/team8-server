@@ -7,6 +7,7 @@ from rest_framework import serializers
 
 class CourseListSerializer(serializers.ModelSerializer):
     rate = serializers.SerializerMethodField()
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
 
     def get_rate(self, obj):
         return obj.review_set.all().aggregate(Avg('rate'))['rate__avg']
@@ -14,7 +15,8 @@ class CourseListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = (
-            "name", "curriculum", "professor", "department", "number", "class_number", "maximum",
+            "id", "name", "curriculum", "professor",
+            "department", "number", "class_number", "maximum",
             "cart", "current", "time", "credit", "rate")
 
 
@@ -38,7 +40,10 @@ class CourseDetailSerializer(serializers.ModelSerializer):
 class ReviewListSerializer(serializers.ModelSerializer):
     CONTENT_LENGTH_LIMIT = 300
     id = serializers.PrimaryKeyRelatedField(read_only=True)
-    created_by = UserReadonlySerializer(read_only=True)
+    created_by = serializers.SerializerMethodField()
+
+    def get_created_by(self, obj):
+        return obj.created_by.name
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -54,8 +59,10 @@ class ReviewListSerializer(serializers.ModelSerializer):
 
 class ReviewDetailSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
-    created_by = UserReadonlySerializer(read_only=True)
-    course = CourseListSerializer(read_only=True)
+    created_by = serializers.SerializerMethodField()
+
+    def get_created_by(self, obj):
+        return obj.created_by.name
 
     class Meta:
         model = Review
@@ -65,8 +72,10 @@ class ReviewDetailSerializer(serializers.ModelSerializer):
 
 class CommentListSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
-    created_by = UserReadonlySerializer(read_only=True)
+    created_by = serializers.SerializerMethodField()
     CONTENT_LENGTH_LIMIT = 300
+    def get_created_by(self, obj):
+        return obj.created_by.name
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -81,7 +90,10 @@ class CommentListSerializer(serializers.ModelSerializer):
 
 class CommentDetailSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
-    created_by = UserReadonlySerializer(read_only=True)
+    created_by = serializers.SerializerMethodField()
+
+    def get_created_by(self, obj):
+        return obj.created_by.name
 
     class Meta:
         model = Comment
