@@ -104,400 +104,225 @@
         }
         ```
 
-- [] Comment
+- Review
 
-  - /blog/comments/
+  - /lectures/<int:id>/reviews/
 
-    [] GET : comment의 리스트를 요청
-
-       ```
-       request : {}
-       response : {
-       	"count": 4,
-       	"next": null,
-       	"previous": null,
-       	"results": [
-    		{
-    			"id": 1,
-    			"created_by": {
-    				"id": 1,
-    				"username": "",
-    				"email": ""
-    			},
-    			"content": "",
-    			"post": 3
-    		},
-           ...
-       }
-       ```
-
-    [] POST : 새 comment를 생성
-    
-        ```
-        request : {
-            "content" : "",
-	        "post_id" : 3
-        }
-        response : {
-        	"id": 14,
-        	"post": 3,
-        	"created_by": {
-        		"id": 2,
-        		"username": "testuser2",
-        		"email": ""
-        	},
-        	"created_at": "2022-11-08T11:02:35.522016Z",
-        	"updated_at": null,
-        	"content": "",
-        	"tags": []
-        }
-        ```
-
-  - /blog/comments/<int:pk>/
-
-    [] GET : id가 pk인 comment의 detail을 요청
-
-        ```
-        request : {}
-        response : {
-        	"id": 1,
-        	"post": 3,
-        	"created_by": {
-        		"id": 2,
-        		"username": "",
-        		"email": ""
-        	},
-        	"created_at": "2022-11-08T06:10:11.607727Z",
-        	"updated_at": null,
-        	"content": "",
-        	"tags": [
-                "commenttag1",
-                "commenttag2"
-            ]
-        }
-        ```
-
-    [] PUT : id가 pk인 comment를 수정. pk번 comment 생성자/Admin 만 가능
-
-        ```
-        request : {
-            "content" : "",
-        }
-        response : {
-        	"id": 14,
-        	"post": 3,
-        	"created_by": {
-        		"id": 2,
-        		"username": "testuser2",
-        		"email": ""
-        	},
-        	"created_at": "2022-11-08T11:02:35.522016Z",
-        	"updated_at": null,
-        	"content": "",
-        	"tags": []
-        }
-        ```
-
-    [] PATCH : id가 pk인 comment를 일부만 수정. pk번 comment 생성자/Admin 만 가능
-
-        ```
-        request : {
-            "content" : "",
-        }
-        response : {
-        	"id": 14,
-        	"post": 3,
-        	"created_by": {
-        		"id": 2,
-        		"username": "testuser2",
-        		"email": ""
-        	},
-        	"created_at": "2022-11-08T11:02:35.522016Z",
-        	"updated_at": null,
-        	"content": "",
-        	"tags": []
-        }
-        ```
-
-    [] DELETE : id가 pk인 comment를 제거. pk번 comment 생성자/Admin 만 가능
-
-        ```
-        request : {}
-        response : 204 No Content
-        ```
-
-  - [] /blog/posts/<int:post_id>/comments/
-    
-    [] GET : id가 post_id인 post에 달린 comment의 리스트를 요청.
-
-        ```
-        request : {}
-        response : {
-    	    "count": 2,
-	        "next": null,
-	        "previous": null,
-	        "results": [
-	        	{
-	        		"id": 15,
-	        		"created_by": {
-	        			"id": 2,
-	        			"username": "testuser2",
-	        			"email": ""
-	        		},
-	        		"content": "",
-	        		"post": 14
-	        	},
-                ...
-	        ]
-        }
-        ```
-
-
-- [] Comment
-
-  - /blog/comments/
-
-    [] GET : comment의 리스트를 요청
+    [] GET : id번 강의 리뷰 리스트를 요청. created_by는 리뷰 생성자가 본인이면 name, 아니면 null
 
        ```
-       request : {}
-       response : {
-       	"count": 4,
-       	"next": null,
-       	"previous": null,
-       	"results": [
-    		{
-    			"id": 1,
-    			"created_by": {
-    				"id": 1,
-    				"username": "",
-    				"email": ""
-    			},
-    			"content": "",
-    			"post": 3
-    		},
-           ...
-       }
-       ```
-
-    [] POST : 새 comment를 생성
-    
-        ```
-        request : {
-            "content" : "",
-	        "post_id" : 3
-        }
-        response : {
-        	"id": 14,
-        	"post": 3,
-        	"created_by": {
-        		"id": 2,
-        		"username": "testuser2",
-        		"email": ""
-        	},
-        	"created_at": "2022-11-08T11:02:35.522016Z",
-        	"updated_at": null,
-        	"content": "",
-        	"tags": []
-        }
-        ```
-
-  - /blog/comments/<int:pk>/
-
-    [] GET : id가 pk인 comment의 detail을 요청
-
-        ```
         request : {}
         response : {
-        	"id": 1,
-        	"post": 3,
-        	"created_by": {
-        		"id": 2,
-        		"username": "",
-        		"email": ""
-        	},
-        	"created_at": "2022-11-08T06:10:11.607727Z",
-        	"updated_at": null,
-        	"content": "",
-        	"tags": [
-                "commenttag1",
-                "commenttag2"
-            ]
-        }
-        ```
-
-    [] PUT : id가 pk인 comment를 수정. pk번 comment 생성자/Admin 만 가능
-
-        ```
-        request : {
-            "content" : "",
-        }
-        response : {
-        	"id": 14,
-        	"post": 3,
-        	"created_by": {
-        		"id": 2,
-        		"username": "testuser2",
-        		"email": ""
-        	},
-        	"created_at": "2022-11-08T11:02:35.522016Z",
-        	"updated_at": null,
-        	"content": "",
-        	"tags": []
-        }
-        ```
-
-    [] PATCH : id가 pk인 comment를 일부만 수정. pk번 comment 생성자/Admin 만 가능
-
-        ```
-        request : {
-            "content" : "",
-        }
-        response : {
-        	"id": 14,
-        	"post": 3,
-        	"created_by": {
-        		"id": 2,
-        		"username": "testuser2",
-        		"email": ""
-        	},
-        	"created_at": "2022-11-08T11:02:35.522016Z",
-        	"updated_at": null,
-        	"content": "",
-        	"tags": []
-        }
-        ```
-
-    [] DELETE : id가 pk인 comment를 제거. pk번 comment 생성자/Admin 만 가능
-
-        ```
-        request : {}
-        response : 204 No Content
-        ```
-
-  - [] /blog/posts/<int:post_id>/comments/
-    
-    [] GET : id가 post_id인 post에 달린 comment의 리스트를 요청.
-
-        ```
-        request : {}
-        response : {
-    	    "count": 2,
-	        "next": null,
-	        "previous": null,
-	        "results": [
-	        	{
-	        		"id": 15,
-	        		"created_by": {
-	        			"id": 2,
-	        			"username": "testuser2",
-	        			"email": ""
-	        		},
-	        		"content": "",
-	        		"post": 14
-	        	},
-                ...
-	        ]
-        }
-        ```
-
-- [] Tag
-
-  - /blog/posts/tags/
-
-    [] GET : post에 붙은 태그들의 리스트를 요청
-
-        ```
-        request : {}
-        response : {
-            "count": 3,
-	        "next": null,
-	        "previous": null,
-	        "results": [
-	        	{
-	        		"content": "tag1"
-	        	},
-	        	{
-	        		"content": "tag2"
-	        	},
-	        	{
-	        		"content": "tag3"
-	        	}
-	        ]
-        }
-        ```
-
-  - /blog/posts/tags/<str:tag>/
-
-    [] GET : tag가 태그로 붙은 post의 list를 요청. 생성시간 역순 기준
-
-        ```
-        request : {}
-        response : {
-            "count" : 0,
-            "next" : null,
-            "previous" : null,
-            "results" : [{
-	    		    "id": 1,
-	    		    "created_by": {
-	    		    	"id": 2,
-	    		    	"username": "",
-	    		    	"email": ""
-	    		    },
-	    		    "title": "",
-	    		    "content": "", // 최대길이 300 제한
-	    		    "created_at": "2022-11-08T05:46:37.506875Z"
-	    	    },
-                ...
-            ]
-        }
-        ```
-
-  - /blog/comments/tags/
-
-    [] GET : comment에 붙은 태그들의 리스트를 요청
-
-        ```
-        request : {}
-        response : {
-        	"count": 2,
-        	"next": null,
+        	"count": 18,
+        	"next": "http://ec2-13-125-66-192.ap-northeast-2.compute.amazonaws.com:8000/lectures/1/reviews/?page=2",
         	"previous": null,
         	"results": [
         		{
-        			"content": "commenttag1"
-        		},
-        		{
-        			"content": "commenttag2"
-        		}
-        	]
+        			"id": 18,
+        			"title": "1",
+        			"content": "2",
+        			"created_by": "test",
+        			"created_at": "2023-01-04T15:59:10.533384Z",
+        			"is_updated": false,
+        			"updated_at": null,
+        			"rate": 5,
+        			"course": 1,
+        			"semester": "4"
+                },
+                {...}
+            ]
         }
+       ```
+
+    [] POST : id번 강의에 새 리뷰를 생성
+    
         ```
-
-  - /blog/posts/tags/<str:tag>/
-
-    [] GET : tag가 태그로 붙은 comment의 list를 요청. 생성시간 역순 기준
-
-        ```
-        request : {}
+        request : {
+        	"title" : "review title",
+        	"content" : "review content",
+        	"rate" : 3,
+        	"semester" : "2022-2"
+        }
         response : {
-        	"count": 2,
-        	"next": null,
-        	"previous": null,
-        	"results": [
-        		{
-        			"id": 1,
-        			"created_by": {
-        				"id": 1,
-        				"username": "",
-        				"email": ""
-        			},
-        			"content": "",
-        			"post": 3
-        		},
-                ...
-        	]
+        	"id": 14,
+        	"title": "review title",
+        	"content": "review content",
+        	"created_by": "test2",
+        	"created_at": "2023-01-04T16:04:01.701656Z",
+        	"is_updated": false,
+        	"updated_at": null,
+        	"rate": 3,
+        	"course": 1,
+        	"semester": "2022-2"
         }
         ```
 
+  - /lectures/<int:id>/reviews/<int:rid>/
   
+    [] GET : id번 강의에 달린 rid번 리뷰의 detail을 요청. rid번 리뷰 생성자/Admin 만 가능. created_by는 리뷰 생성자가 본인이면 name, 아니면 null
+
+        ```
+        request : {}
+        response : {
+        	"id": 32,
+        	"title": "review title",
+        	"content": "review content",
+        	"created_by": "test2",
+        	"created_at": "2023-01-04T16:04:01.701656Z",
+        	"is_updated": false,
+        	"updated_at": null,
+        	"rate": 3,
+        	"course": 1,
+        	"semester": "2022-2"
+        }
+        ```
+
+    [] PUT : rid번 리뷰를 수정. rid번 리뷰 생성자/Admin 만 가능
+
+        ```
+        request : {
+        	"title" : "review put",
+        	"content" : "review content",
+        	"rate" : 3,
+        	"semester" : "2022-2"
+        }
+        response : {
+        	"id": 32,
+        	"title": "review put",
+        	"content": "review content",
+        	"created_by": "test2",
+        	"created_at": "2023-01-04T16:04:01.701656Z",
+        	"is_updated": true,
+        	"updated_at": "2023-01-04T16:07:48.215594Z",
+        	"rate": 3,
+        	"course": 1,
+        	"semester": "2022-2"
+        }
+        ```
+
+    [] PATCH : id번 리뷰를 일부만 수정. id번 리뷰 생성자/Admin 만 가능
+
+        ```
+        request : {
+            "content" : "review patch",
+        }
+        response : {
+        	"id": 32,
+        	"title": "review put",
+        	"content": "review patch",
+        	"created_by": "test2",
+        	"created_at": "2023-01-04T16:04:01.701656Z",
+        	"is_updated": true,
+        	"updated_at": "2023-01-04T16:09:55.747977Z",
+        	"rate": 3,
+        	"course": 1,
+        	"semester": "2022-2"
+        }
+        ```
+
+    [] DELETE : id번 리뷰를 제거. id번 리뷰 생성자/Admin 만 가능
+
+        ```
+        request : {}
+        response : 204 No Content
+        ```
+
+
+- [] Comment
+
+  - /lectures/<int:id>/reviews/<int:rid>/comments/
+
+    [] GET : comment의 리스트를 요청
+
+       ```
+       request : {}
+       response : {
+       	"count": 4,
+       	"next": null,
+       	"previous": null,
+       	"results": [
+    		{
+    			"id": 7,
+    			"created_by": "test2",
+    			"content": "content",
+    			"review": 6,
+    			"created_at": "2023-01-04T10:33:58.767621Z",
+    			"is_updated": false
+    		},
+           {...}
+       }
+       ```
+
+    [] POST : 새 comment를 생성
+    
+        ```
+        request : {
+        	"content" : "content"
+        }
+        response : {
+        	"id": 9,
+        	"created_by": "test2",
+        	"content": "content",
+        	"review": 6,
+        	"created_at": "2023-01-04T16:14:51.212650Z",
+        	"is_updated": false
+        }
+        ```
+
+  - /lectures/<int:id>/reviews/<int:rid>/comments/<int:cid>/
+
+    [] GET : cid번 comment의 detail을 요청
+
+        ```
+        request : {}
+        response : {
+        	"id": 9,
+        	"created_by": "test2",
+        	"content": "content",
+        	"review": 6,
+        	"created_at": "2023-01-04T16:14:51.212650Z",
+        	"is_updated": true,
+        	"updated_at": "2023-01-04T16:19:37.686856Z"
+        }
+        ```
+
+    [] PUT : cid번 comment를 수정. cid번 comment 생성자/Admin 만 가능
+
+        ```
+        request : {
+        	"content" : "content put"
+        }
+        response : {
+        	"id": 9,
+        	"created_by": "test2",
+        	"content": "content put",
+        	"review": 6,
+        	"created_at": "2023-01-04T16:14:51.212650Z",
+        	"is_updated": true,
+        	"updated_at": "2023-01-04T16:20:54.072956Z"
+        }
+        ```
+
+    [] PATCH : cid번 comment를 일부만 수정. pk번 comment 생성자/Admin 만 가능
+
+        ```
+        request : {
+        	"content" : "content patch"
+        }
+        response : {
+        	"id": 9,
+        	"created_by": "test2",
+        	"content": "content patch",
+        	"review": 6,
+        	"created_at": "2023-01-04T16:14:51.212650Z",
+        	"is_updated": true,
+        	"updated_at": "2023-01-04T16:21:18.664607Z"
+        }
+        ```
+
+    [] DELETE : id가 pk인 comment를 제거. pk번 comment 생성자/Admin 만 가능
+
+        ```
+        request : {}
+        response : 204 No Content
+        ```
