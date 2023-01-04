@@ -2,6 +2,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics
+
+from .permissions import IsSafeOrAuthorizedUser, IsCreator
 from .serializers import CourseListSerializer, ReviewListSerializer, ReviewDetailSerializer, CommentListSerializer, \
     CommentDetailSerializer
 from .models import Course, Review, Comment
@@ -13,6 +15,7 @@ class CourseList(generics.ListAPIView):
 
 
 class ReviewListCreateView(generics.ListCreateAPIView):
+    permission_classes = [IsSafeOrAuthorizedUser]
     queryset = Review.objects.all().order_by('-created_at')
     serializer_class = ReviewListSerializer
 
@@ -32,6 +35,7 @@ class ReviewListCreateView(generics.ListCreateAPIView):
 class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all().order_by('-created_at')
     serializer_class = ReviewDetailSerializer
+    permission_classes = [IsCreator]
 
     def get_object(self):
         return get_object_or_404(Review, id=self.kwargs['rid'])
@@ -53,6 +57,7 @@ class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 class CommentListCreateView(generics.ListCreateAPIView):
     queryset = Comment.objects.all().order_by('-created_at')
     serializer_class = CommentListSerializer
+    permission_classes = [IsSafeOrAuthorizedUser]
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -70,6 +75,7 @@ class CommentListCreateView(generics.ListCreateAPIView):
 class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all().order_by('-created_at')
     serializer_class = CommentDetailSerializer
+    permission_classes = [IsCreator]
 
     def get_object(self):
         return get_object_or_404(Comment, id=self.kwargs['cid'])

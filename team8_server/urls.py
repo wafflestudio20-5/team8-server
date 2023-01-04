@@ -21,11 +21,5 @@ from snu_student import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('snu_student.urls')),
-    path('accounts/', include('allauth.urls')),
-    path('rest-auth/kakao/', views.KakaoLogin.as_view(), name='kakao'),
-    path('rest-auth/naver/', views.NaverLogin.as_view(), name='naver'),
-    path('rest-auth/google/', views.GoogleLogin.as_view(), name='google'),
-    path('rest-auth/github/', views.GithubLogin.as_view(), name='github'),
-    path('accounts/', include('allauth.urls')),
     path('lectures/', include('snu_course.urls')),
 ]
