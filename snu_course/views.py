@@ -3,15 +3,27 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics
 
-from .permissions import IsSafeOrAuthorizedUser, IsCreator
+from .permissions import IsSafeOrAuthorizedUser, IsCreator, IsSafeOrAdminUser
 from .serializers import CourseListSerializer, ReviewListSerializer, ReviewDetailSerializer, CommentListSerializer, \
-    CommentDetailSerializer
+    CommentDetailSerializer, CourseDetailSerializer
 from .models import Course, Review, Comment
 
 
-class CourseList(generics.ListAPIView):
-    queryset = Course.objects.all()
+class CourseListCreateView(generics.ListCreateAPIView):
+    queryset = Course.objects.all().prefetch_related('review_set').order_by('name')
     serializer_class = CourseListSerializer
+    permission_classes = [IsSafeOrAdminUser]
+
+
+class CourseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseDetailSerializer
+    permission_classes = [IsSafeOrAdminUser]
+
+    def get_object(self):
+        obj = get_object_or_404(Course, id=self.kwargs['id'])
+        self.check_object_permissions(self.request, obj)
+        return obj
 
 
 class ReviewListCreateView(generics.ListCreateAPIView):
@@ -38,7 +50,9 @@ class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsCreator]
 
     def get_object(self):
-        return get_object_or_404(Review, id=self.kwargs['rid'])
+        obj = get_object_or_404(Review, id=self.kwargs['rid'])
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -78,7 +92,9 @@ class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsCreator]
 
     def get_object(self):
-        return get_object_or_404(Comment, id=self.kwargs['cid'])
+        obj = get_object_or_404(Comment, id=self.kwargs['cid'])
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)

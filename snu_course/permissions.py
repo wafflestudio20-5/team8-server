@@ -11,7 +11,7 @@ class IsSafeOrAdminUser(permissions.IsAdminUser):
 
 class IsCreator(IsSafeOrAdminUser):
     def has_object_permission(self, request, view, obj):
-        return super().has_permission(request, view) or obj.created_by == request.user
+        return super().has_permission(request, view) or obj.created_by.id == request.user.id
 
     def has_permission(self, request, view):
         return True
@@ -19,5 +19,5 @@ class IsCreator(IsSafeOrAdminUser):
 
 class IsSafeOrAuthorizedUser(IsSafeOrAdminUser):
     def has_permission(self, request, view):
-        return super().has_permission(request, view) or request.user != AnonymousUser
+        return super().has_permission(request, view) or not request.user.is_anonymous
 

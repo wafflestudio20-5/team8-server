@@ -11,6 +11,7 @@ from rest_framework import serializers
 
 # Create your views here.
 
+
 class RegistrationAPIView(APIView):
     permission_classes = [AllowAny]
     serializer_class = RegistrationSerializer

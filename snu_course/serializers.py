@@ -1,20 +1,44 @@
-from snu_student.serializers import UserSerializer
-from .models import Course, Review, Comment
+from django.db.models import Avg
+
+from snu_student.serializers import UserSerializer, UserReadonlySerializer
+from .models import Course, Review, Comment, TimeInfo
 from rest_framework import serializers
 
 
 class CourseListSerializer(serializers.ModelSerializer):
+    rate = serializers.SerializerMethodField()
+
+    def get_rate(self, obj):
+        return obj.review_set.all().aggregate(Avg('rate'))['rate__avg']
+
     class Meta:
         model = Course
         fields = (
-            "name", "curriculum", "professor", "department", "number", "class_number", "maximum", "cart", "current", "time",
-            "credit", "rate")
+            "name", "curriculum", "professor", "department", "number", "class_number", "maximum",
+            "cart", "current", "time", "credit", "rate")
+
+
+class CourseDetailSerializer(serializers.ModelSerializer):
+    parsed_time = serializers.SerializerMethodField()
+    rate = serializers.SerializerMethodField()
+
+    def get_rate(self, obj):
+        return obj.review_set.all().aggregate(Avg('rate'))['rate__avg']
+
+    def get_parsed_time(self, obj):
+        return obj.timeinfo_set.values("day", "start_time", "end_time")
+
+    class Meta:
+        model = Course
+        fields = (
+            "name", "curriculum", "professor", "department", "number", "class_number", "maximum",
+            "cart", "current", "time", "credit", "rate", "parsed_time")
 
 
 class ReviewListSerializer(serializers.ModelSerializer):
     CONTENT_LENGTH_LIMIT = 300
     id = serializers.PrimaryKeyRelatedField(read_only=True)
-    created_by = UserSerializer(read_only=True)
+    created_by = UserReadonlySerializer(read_only=True)
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -30,7 +54,7 @@ class ReviewListSerializer(serializers.ModelSerializer):
 
 class ReviewDetailSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
-    created_by = UserSerializer(read_only=True)
+    created_by = UserReadonlySerializer(read_only=True)
     course = CourseListSerializer(read_only=True)
 
     class Meta:
@@ -41,7 +65,7 @@ class ReviewDetailSerializer(serializers.ModelSerializer):
 
 class CommentListSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
-    created_by = UserSerializer(read_only=True)
+    created_by = UserReadonlySerializer(read_only=True)
     CONTENT_LENGTH_LIMIT = 300
 
     def to_representation(self, instance):
@@ -57,7 +81,7 @@ class CommentListSerializer(serializers.ModelSerializer):
 
 class CommentDetailSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(read_only=True)
-    created_by = UserSerializer(read_only=True)
+    created_by = UserReadonlySerializer(read_only=True)
 
     class Meta:
         model = Comment
