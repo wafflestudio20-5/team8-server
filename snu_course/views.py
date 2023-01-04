@@ -3,7 +3,7 @@ from django.utils import timezone
 from rest_framework import generics
 from rest_framework.response import Response
 
-from .pagination import CoursePagination
+from .pagination import CoursePagination, ReviewPagination, CommentPagination
 from .permissions import IsSafeOrAuthorizedUser, IsCreator, IsSafeOrAdminUser
 from .serializers import CourseListSerializer, ReviewListSerializer, ReviewDetailSerializer, CommentListSerializer, \
     CommentDetailSerializer, CourseDetailSerializer
@@ -32,6 +32,7 @@ class ReviewListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsSafeOrAuthorizedUser]
     queryset = Review.objects.all().order_by('-created_at')
     serializer_class = ReviewListSerializer
+    pagination_class = ReviewPagination
 
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -95,6 +96,7 @@ class CommentListCreateView(generics.ListCreateAPIView):
     queryset = Comment.objects.all().order_by('-created_at')
     serializer_class = CommentListSerializer
     permission_classes = [IsSafeOrAuthorizedUser]
+    pagination_class = CommentPagination
 
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
