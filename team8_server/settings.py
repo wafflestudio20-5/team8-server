@@ -74,6 +74,11 @@ MIDDLEWARE = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000',
+    'http://localhost:8000',
+)
+
 ROOT_URLCONF = 'team8_server.urls'
 
 TEMPLATES = [
