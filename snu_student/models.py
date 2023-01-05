@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.validators import MinValueValidator, RegexValidator
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
         if not email:
