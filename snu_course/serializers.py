@@ -1,4 +1,3 @@
-from snu_student.serializers import UserSerializer
 from .models import Course, Review, Comment
 from rest_framework import serializers
 
@@ -12,6 +11,7 @@ class CourseListSerializer(serializers.ModelSerializer):
 
 
 class ReviewListSerializer(serializers.ModelSerializer):
+    from snu_student.serializers import UserSerializer
     CONTENT_LENGTH_LIMIT = 300
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by = UserSerializer(read_only=True)
@@ -29,6 +29,7 @@ class ReviewListSerializer(serializers.ModelSerializer):
 
 
 class ReviewDetailSerializer(serializers.ModelSerializer):
+    from snu_student.serializers import UserSerializer
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by = UserSerializer(read_only=True)
     course = CourseListSerializer(read_only=True)
@@ -40,6 +41,7 @@ class ReviewDetailSerializer(serializers.ModelSerializer):
 
 
 class CommentListSerializer(serializers.ModelSerializer):
+    from snu_student.serializers import UserSerializer
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by = UserSerializer(read_only=True)
     CONTENT_LENGTH_LIMIT = 300
@@ -56,10 +58,10 @@ class CommentListSerializer(serializers.ModelSerializer):
 
 
 class CommentDetailSerializer(serializers.ModelSerializer):
+    from snu_student.serializers import UserSerializer
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by = UserSerializer(read_only=True)
 
     class Meta:
         model = Comment
         fields = ['id', 'created_by', 'content', 'review', 'created_at', 'is_updated', 'updated_at']
-

@@ -41,7 +41,7 @@ class Course(models.Model):
 
 class TimeInfo(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    day = models.CharField(max_length=1, choices=DAYS_OF_WEEK)
+    day = models.CharField(max_length=3, choices=DAYS_OF_WEEK)
     start_time = models.TimeField()
     end_time = models.TimeField()
 

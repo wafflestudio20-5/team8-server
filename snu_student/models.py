@@ -1,15 +1,17 @@
-from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-import jwt
 from datetime import datetime, timedelta
+
+import jwt
 from django.conf import settings
-from django.core.validators import MinValueValidator, RegexValidator
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db import models
+
 
 SORTS_OF_COURSE = (
     ('I', 'interest'),
     ('C', 'cart'),
     ('R', 'registered')
 )
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):

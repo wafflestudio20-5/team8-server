@@ -28,4 +28,5 @@ urlpatterns = [
     path('rest-auth/github/', views.GithubLogin.as_view(), name='github'),
     path('accounts/', include('allauth.urls')),
     path('lectures/', include('snu_course.urls')),
+    path('interest/', views.InterestCourseAPIView.as_view()),
 ]

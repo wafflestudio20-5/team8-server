@@ -1,23 +1,17 @@
-from django.shortcuts import render
-from rest_framework.generics import RetrieveUpdateAPIView
+from allauth.socialaccount.providers.github.views import GitHubOAuth2Adapter
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
+from allauth.socialaccount.providers.naver.views import NaverOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from rest_auth.registration.serializers import SocialLoginSerializer
+from rest_auth.registration.views import SocialLoginView
+from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import UserSerializer, RegistrationSerializer, LoginSerializer
-from .models import User
-from rest_framework import generics, status
-from rest_framework import serializers
-
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from django.shortcuts import render
-from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.naver.views import NaverOAuth2Adapter
-from allauth.socialaccount.providers.github.views import GitHubOAuth2Adapter
-
-from rest_auth.registration.serializers import SocialLoginSerializer
-from rest_auth.registration.views import SocialLoginView
+from .models import User, UserToCourse
+from .serializers import UserSerializer, RegistrationSerializer, LoginSerializer, UserToCourseSerializer
 
 # Create your views here.
 BASE_URL = 'http://localhost:8000/api/v1/accounts/rest-auth/'
@@ -87,7 +81,7 @@ class UserDetail(generics.RetrieveAPIView):
     serializer_class = UserSerializer
 
 
-class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
+class UserRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
 
