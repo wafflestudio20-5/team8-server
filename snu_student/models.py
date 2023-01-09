@@ -1,9 +1,17 @@
-from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-import jwt
 from datetime import datetime, timedelta
+
+import jwt
 from django.conf import settings
-from django.core.validators import MinValueValidator, RegexValidator
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db import models
+
+
+SORTS_OF_COURSE = (
+    ('I', 'interest'),
+    ('C', 'cart'),
+    ('R', 'registered')
+)
+
 
 
 class UserManager(BaseUserManager):
@@ -53,6 +61,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
 
+    courses = models.ManyToManyField('snu_course.Course', related_name='users', through='UserToCourse')
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -74,3 +84,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class UserToCourse(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey('snu_course.Course', on_delete=models.CASCADE)
+    sort = models.CharField(max_length=1, choices=SORTS_OF_COURSE)

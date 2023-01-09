@@ -1,8 +1,9 @@
 from django.contrib.auth import authenticate
 from django.utils import timezone
-
-from .models import User
 from rest_framework import serializers
+
+from snu_course.models import Course
+from .models import User, UserToCourse
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -110,3 +111,25 @@ class LoginSerializer(serializers.Serializer):
             'last_login': user.last_login,
             'token': user.token
         }
+
+
+class UserToCourseSerializer(serializers.ModelSerializer):
+    from snu_course.serializers import CourseListSerializer
+    course = CourseListSerializer(read_only=True)
+    course_id = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all(), source='course', write_only=True)
+
+    def validate(self, attrs):
+        if UserToCourse.objects.filter(course=attrs['course'], user=attrs['user']).exists():
+            raise serializers.ValidationError({'course_id': 'The course is already associated with the user'})
+        return attrs
+
+    def to_representation(self, instance):
+        return super().to_representation(instance)['course']
+
+    def to_internal_value(self, data):
+        internal_value = super().to_internal_value(data)
+        return {**internal_value, 'user': self.context['request'].user, 'sort': self.context['sort']}
+
+    class Meta:
+        model = UserToCourse
+        fields = ['course', 'course_id']
