@@ -99,3 +99,17 @@ class UserRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class InterestCourseAPIView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserToCourseSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['sort'] = 'I'
+        return context
+
+    def get_queryset(self):
+        user = self.request.user.id
+        return UserToCourse.objects.filter(user=user, sort='I')
