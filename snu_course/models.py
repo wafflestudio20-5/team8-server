@@ -4,13 +4,13 @@ from django.core.validators import MinValueValidator, RegexValidator
 from snu_student.models import User
 
 DAYS_OF_WEEK = (
-    (0, 'Monday'),
-    (1, 'Tuesday'),
-    (2, 'Wednesday'),
-    (3, 'Thursday'),
-    (4, 'Friday'),
-    (5, 'Saturday'),
-    (6, 'Sunday'),
+    ('MON', 'Monday'),
+    ('TUE', 'Tuesday'),
+    ('WED', 'Wednesday'),
+    ('THU', 'Thursday'),
+    ('FRI', 'Friday'),
+    ('SAT', 'Saturday'),
+    ('SUN', 'Sunday'),
 )
 
 
@@ -35,7 +35,6 @@ class Course(models.Model):
     form = models.CharField(default='', max_length=100, blank=True)
     classroom = models.CharField(default='', max_length=100, blank=True)
     cart = models.IntegerField(default=0, blank=True)
-    rate = models.IntegerField(null=True)
     # parsed_time
 
 
@@ -61,8 +60,8 @@ class Review(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
 
-    rate = models.IntegerField(null=True, blank=True)
-    semester = models.CharField(max_length=100, null=True, blank=True)
+    rate = models.IntegerField(default=0)
+    semester = models.CharField(max_length=100, null=True)
 
 
 class Comment(models.Model):

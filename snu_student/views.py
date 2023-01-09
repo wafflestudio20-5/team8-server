@@ -6,47 +6,17 @@ from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from rest_auth.registration.serializers import SocialLoginSerializer
 from rest_auth.registration.views import SocialLoginView
 from rest_framework import generics, status
+from django.shortcuts import render
+from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import User, UserToCourse
 from .serializers import UserSerializer, RegistrationSerializer, LoginSerializer, UserToCourseSerializer
+from rest_framework import serializers
 
 # Create your views here.
-BASE_URL = 'http://localhost:8000/api/v1/accounts/rest-auth/'
-KAKAO_CALLBACK_URI = BASE_URL + 'kakao/callback/'
-NAVER_CALLBACK_URI = BASE_URL + 'naver/callback/'
-GOOGLE_CALLBACK_URI = BASE_URL + 'google/callback/'
-GITHUB_CALLBACK_URI = BASE_URL + 'github/callback/'
-
-
-class KakaoLogin(SocialLoginView):
-    adapter_class = KakaoOAuth2Adapter
-    callbakc_url = KAKAO_CALLBACK_URI
-    client_class = OAuth2Client
-    serializer_class = SocialLoginSerializer
-
-
-class NaverLogin(SocialLoginView):
-    adapter_class = NaverOAuth2Adapter
-    callback_url = NAVER_CALLBACK_URI
-    client_class = OAuth2Client
-    serializer_class = SocialLoginSerializer
-
-
-class GithubLogin(SocialLoginView):
-    adapter_class = GitHubOAuth2Adapter
-    callback_url = GITHUB_CALLBACK_URI
-    client_class = OAuth2Client
-    serializer_class = SocialLoginSerializer
-
-
-class GoogleLogin(SocialLoginView):
-    adapter_class = GoogleOAuth2Adapter
-    callback_url = GOOGLE_CALLBACK_URI
-    client_class = OAuth2Client
-    serializer_class = SocialLoginSerializer
 
 
 class RegistrationAPIView(APIView):
