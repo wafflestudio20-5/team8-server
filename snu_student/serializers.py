@@ -56,6 +56,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     )
 
     token = serializers.CharField(max_length=255, read_only=True)
+    refresh_token = serializers.CharField(max_length=255, read_only=True)
 
     class Meta:
         model = User
@@ -63,7 +64,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'email',
             'name',
             'password',
-            'token'
+            'token',
+            'refresh_token'
         ]
 
     def create(self, validated_data):
@@ -75,6 +77,17 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128, write_only=True)
     last_login = serializers.CharField(max_length=255, read_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
+    refresh_token = serializers.CharField(max_length=255, read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'email',
+            'name',
+            'password',
+            'token',
+            'refresh_token'
+        ]
 
     def validate(self, data):
         email = data.get('email', None)
@@ -108,5 +121,6 @@ class LoginSerializer(serializers.Serializer):
         return {
             'email': user.email,
             'last_login': user.last_login,
-            'token': user.token
+            'token': user.token,
+            'refresh_token': user.refresh_token
         }

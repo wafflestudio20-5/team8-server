@@ -1,6 +1,9 @@
+from datetime import datetime
+
 import jwt
 
 from django.conf import settings
+from django.utils import timezone
 from rest_framework import authentication, exceptions
 
 from .models import User
@@ -54,14 +57,16 @@ class JWTAuthentication(authentication.BaseAuthentication):
         # 한편 앞서 lower() 메소드를 이용해 전부 소문자로 바꾸었기 때문에 'Token'값이
         # 'token'값이 돼서 오류없이 통과합니다.
         prefix = auth_header[0].decode('utf-8')
+
         token = auth_header[1].decode('utf-8')
 
         if prefix.lower() != auth_header_prefix:
             return None
 
-        return self._authenticate_credentials(request, token)
+        return self._authenticate_credentials(token)
 
-    def _authenticate_credentials(self, request, token):
+    @staticmethod
+    def _authenticate_credentials(token):
         """
             위의 과정을 통과한 user에게 접근을 허용하도록 합니다. 만약 인증이 성공적이라면
             user와 token을 반환해주고, 그렇지 않은 경우에는 error를 반환합니다.
@@ -74,12 +79,51 @@ class JWTAuthentication(authentication.BaseAuthentication):
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
 
+        except jwt.ExpiredSignatureError:
+            msg = 'This token has expired.'
+            raise exceptions.AuthenticationFailed(msg)
+
         except:
+            msg = 'Invalid authentication. Could not decode token.'
+            raise exceptions.AuthenticationFailed(msg)
+
+        if 'id' not in payload or 'exp' not in payload:
             msg = 'Invalid authentication. Could not decode token.'
             raise exceptions.AuthenticationFailed(msg)
 
         try:
             user = User.objects.get(pk=payload['id'])
+        except User.DoesNotExist:
+            msg = 'No user matching this token was found.'
+            raise exceptions.AuthenticationFailed(msg)
+
+        if not user.is_active:
+            msg = 'This user has been deactivated.'
+            raise exceptions.AuthenticationFailed(msg)
+
+        return (user, token)
+
+    @staticmethod
+    def refresh_credentials(token):
+
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+
+        except jwt.ExpiredSignatureError:
+            msg = 'This token has expired.'
+            raise exceptions.AuthenticationFailed(msg)
+
+        except:
+            msg = 'Invalid authentication. Could not decode token.'
+            raise exceptions.AuthenticationFailed(msg)
+
+        if 'id' not in payload or 'type' not in payload or payload['type'] != 'refresh':
+            msg = 'Invalid authentication. Could not decode token.'
+            raise exceptions.AuthenticationFailed(msg)
+
+        try:
+            user = User.objects.get(pk=payload['id'])
+
         except User.DoesNotExist:
             msg = 'No user matching this token was found.'
             raise exceptions.AuthenticationFailed(msg)
