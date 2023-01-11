@@ -29,4 +29,6 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('lectures/', include('snu_course.urls')),
     path('interest/', views.InterestCourseAPIView.as_view()),
+    path('cart/', views.CartCourseAPIView.as_view()),
+    path('registered/', views.RegisteredCourseAPIView.as_view()),
 ]
