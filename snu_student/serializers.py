@@ -40,6 +40,16 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
+class UserReadonlySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'email',
+            'name'
+        ]
+        read_only_fields = ('email', 'name')
+
+
 class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         max_length=128,

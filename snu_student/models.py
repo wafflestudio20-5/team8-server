@@ -13,6 +13,7 @@ SORTS_OF_COURSE = (
 )
 
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
         if not email:
