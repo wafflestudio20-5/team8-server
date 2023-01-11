@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -8,8 +9,29 @@ from .models import Course, Review, Comment
 
 
 class CourseList(generics.ListAPIView):
-    queryset = Course.objects.all()
     serializer_class = CourseListSerializer
+
+    def get_queryset(self):
+        parameters = {
+            'grade': 'grade',
+            'degree': 'degree',
+            'college': 'college',
+            'department': 'department',
+            'curriculum': 'curriculum',
+            'name__contains': 'keyword',
+        }
+
+        kwargs = {key: self.request.GET.get(value) for key, value in parameters.items() if self.request.GET.get(value)}
+        queryset = Course.objects.filter(**kwargs)
+
+        exception = self.request.GET.get('exception')
+        if exception:
+            q = Q()
+            for exception_keyword in exception.split(','):
+                q |= Q(name__contains=exception_keyword)
+            queryset = queryset.exclude(q)
+
+        return queryset
 
 
 class ReviewListCreateView(generics.ListCreateAPIView):
