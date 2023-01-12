@@ -103,7 +103,7 @@ response : {
 
 - Lecture 상세검색
 
-  - /lectures?grade=2&degree=학사&college=공과대학&department=컴퓨터공학부&curriculum=전필&keyword=컴퓨터&exception=구조
+  - /lectures?
 
     [] GET : URL 파라미터로 grade, degree, college, department, curriculum, keyword, exception 가능. (모두 선택적 인자)
     - grade: 1, 2, 3, 4, 5
@@ -115,7 +115,15 @@ response : {
     - exception: 주어진 문자열을 제외하도록 제한 (여러 개면 comma로 구분)
 
 ```
-request : {}
+request : {
+	"grade"=2,
+	"degree"="학사",
+	"college"="공과대학",
+	"department"="컴퓨터공학부",
+	"curriculum"="전필",
+	"keyword"="컴퓨터",
+	"exception"="구조"
+}
 response : {
 	"count": 1,
 	"next": null,
