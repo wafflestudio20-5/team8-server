@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import jwt
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 from django.db.models import Sum, F
 
@@ -12,17 +13,16 @@ SORTS_OF_COURSE = (
     ('R', 'registered')
 )
 
-
-
 class UserManager(BaseUserManager):
-    def create_user(self, email, name, password=None):
+    def create_user(self, email, name, password=None, **extra_fields):
         if not email:
             raise ValueError('must have user email')
         if not name:
             raise ValueError('must have user name')
         user = self.model(
             email=self.normalize_email(email),
-            name=name
+            name=name,
+            **extra_fields
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -41,17 +41,17 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    # student_id_validator = RegexValidator(regex=r'^([0-9]{4})-([0-9]{5})$')
+    student_id_validator = RegexValidator(regex=r'^([0-9]{4})-([0-9]{5})$')
 
     id = models.AutoField(primary_key=True)
     email = models.EmailField(default='', max_length=100, null=False, blank=False, unique=True)
     name = models.CharField(default='', max_length=100, null=False, blank=False)
-    # student_id = models.CharField(validators=[student_id_validator], default='', max_length=, null=False, blank=False)
-    # college = models.CharField(default='', max_length=100, null=False, blank=False)
-    # department = models.CharField(default='', max_length=100, null=False, blank=False)
-    # program = models.CharField(default='', max_length=100, null=False, blank=False)
-    # academic_year = models.IntegerField(validators=[MinValueValidator(1)], null=False, blank=False)
-    # year_of_entrance = models.IntegerField(null=False, blank=False)
+    student_id = models.CharField(validators=[student_id_validator], default='', max_length=100, null=False, blank=False)
+    college = models.CharField(default='', max_length=100, null=False, blank=False)
+    department = models.CharField(default='', max_length=100, null=False, blank=False)
+    program = models.CharField(default='', max_length=100, null=False, blank=False)
+    academic_year = models.IntegerField(validators=[MinValueValidator(1)], null=False, blank=False)
+    year_of_entrance = models.IntegerField(null=False, blank=False)
     # number_of_semesters = models.IntegerField(validators=[MinValueValidator(1)], null=False, blank=False)
     # major = models.CharField(default='', max_length=100, null=False, blank=False)
     # second_major = models.CharField(default='', max_length=100, null=True, blank=True)

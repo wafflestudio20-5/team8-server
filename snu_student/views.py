@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .backends import JWTAuthentication
-from .serializers import UserSerializer, RegistrationSerializer, LoginSerializer
+from .serializers import UserSerializer, RegistrationSerializer, LoginSerializer, UserDetailSerializer
 from .models import User
 from rest_framework import generics, status
 from .models import User, UserToCourse
@@ -66,12 +66,12 @@ class RefreshApiView(ListAPIView):
 
 class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserDetailSerializer
 
 
 class UserRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserSerializer
+    serializer_class = UserDetailSerializer
 
     def get(self, request, *args, **kwargs):
         serializer = self.serializer_class(request.user)
