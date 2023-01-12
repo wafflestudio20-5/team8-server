@@ -105,7 +105,7 @@ response : {
 
   - /lectures?
 
-    [] GET : URL 파라미터로 grade, degree, college, department, curriculum, keyword, exception 가능. (모두 선택적 인자)
+    [] GET : Body grade, degree, college, department, curriculum, keyword, exception 가능. (모두 선택적 인자)
     - grade: 1, 2, 3, 4, 5
     - degree: 학사, 석사, 박사, 석박사통합, 학석사연계, 학석사통합, 복합학위
     - college: 공과대학, 자연과학대학, ... (수신 사이트 참조)
@@ -116,13 +116,13 @@ response : {
 
 ```
 request : {
-	"grade"=2,
-	"degree"="학사",
-	"college"="공과대학",
-	"department"="컴퓨터공학부",
-	"curriculum"="전필",
-	"keyword"="컴퓨터",
-	"exception"="구조"
+	"grade" : 2,
+	"degree" : "학사",
+	"college" : "공과대학",
+	"department" : "컴퓨터공학부",
+	"curriculum" : "전필",
+	"keyword" : "컴퓨터",
+	"exception" : "구조"
 }
 response : {
 	"count": 1,
