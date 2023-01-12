@@ -82,8 +82,20 @@ class User(AbstractBaseUser, PermissionsMixin):
     def token(self):
         return self._generate_jwt_token()
 
+    @property
+    def refresh_token(self):
+        return self._generate_jwt_refresh_token()
+
+    def _generate_jwt_refresh_token(self):
+        token = jwt.encode({
+            'id': self.pk,
+            'type': 'refresh'
+        }, settings.SECRET_KEY, algorithm='HS256')
+
+        return token
+
     def _generate_jwt_token(self):
-        dt = datetime.now() + timedelta(days=60)  # expiration time
+        dt = datetime.now() + timedelta(minutes=10)  # expiration time
 
         token = jwt.encode({
             'id': self.pk,

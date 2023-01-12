@@ -12,6 +12,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .backends import JWTAuthentication
+from .serializers import UserSerializer, RegistrationSerializer, LoginSerializer
+from .models import User
+from rest_framework import generics, status
 from .models import User, UserToCourse
 from .serializers import UserSerializer, RegistrationSerializer, LoginSerializer, UserToCourseSerializer
 from rest_framework import serializers
@@ -42,6 +46,19 @@ class LoginAPIView(APIView):
 
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RefreshApiView(ListAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = LoginSerializer
+    Auth_class = JWTAuthentication
+
+    def post(self, request, *args, **kwargs):
+        user, token = self.Auth_class.refresh_credentials(request.data['refresh_token'])
+        print(token)
+        serializer = self.get_serializer(user)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
