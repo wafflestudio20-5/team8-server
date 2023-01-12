@@ -68,6 +68,62 @@ response : {
     ]
 }
 ```
+
+- Lecture 상세검색
+
+  - /lectures?grade=2&degree=학사&college=공과대학&department=컴퓨터공학부&curriculum=전필&keyword=컴퓨터&exception=구조
+
+    [] GET : URL 파라미터로 grade, degree, college, department, curriculum, keyword, exception 가능. (모두 선택적 인자)
+    - grade: 1, 2, 3, 4, 5
+    - degree: 학사, 석사, 박사, 석박사통합, 학석사연계, 학석사통합, 복합학위
+    - college: 공과대학, 자연과학대학, ... (수신 사이트 참조)
+    - department: 컴퓨터공학부, ...
+    - curriculum: 교양, 전필, 전선, ...
+    - keyword: 주어진 문자열을 정확히 포함하도록 제한
+    - exception: 주어진 문자열을 제외하도록 제한 (여러 개면 comma로 구분)
+
+```
+request : {}
+response : {
+	"count": 1,
+	"next": null,
+	"previous": null,
+	"results": [
+		{
+			"id": 2943,
+			"name": "컴퓨터프로그래밍",
+			"curriculum": "전필",
+			"professor": "이영기",
+			"department": "컴퓨터공학부",
+			"number": "M1522.000600",
+			"class_number": 1,
+			"maximum": 150,
+			"cart": 118,
+			"current": 159,
+			"time": "화(09:30~10:45)/수(19:00~20:50)/목(09:30~10:45)",
+			"credit": 4,
+			"rate": null,
+			"parsed_time": [
+				{
+					"day": "TUE",
+					"start_time": "09:30:00",
+					"end_time": "10:45:00"
+				},
+				{
+					"day": "WED",
+					"start_time": "19:00:00",
+					"end_time": "20:50:00"
+				},
+				{
+					"day": "THU",
+					"start_time": "09:30:00",
+					"end_time": "10:45:00"
+				}
+			]
+		}
+	]
+}
+```
     
   - /lectures/<int:id>/
 
