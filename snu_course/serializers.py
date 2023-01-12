@@ -1,7 +1,5 @@
-from django.db.models import Avg
-
-from snu_student.serializers import UserSerializer, UserReadonlySerializer
 from .models import Course, Review, Comment, TimeInfo
+from django.db.models import Avg
 from rest_framework import serializers
 
 
@@ -38,6 +36,7 @@ class CourseDetailSerializer(serializers.ModelSerializer):
 
 
 class ReviewListSerializer(serializers.ModelSerializer):
+    from snu_student.serializers import UserSerializer
     CONTENT_LENGTH_LIMIT = 300
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by = serializers.SerializerMethodField()
@@ -58,6 +57,7 @@ class ReviewListSerializer(serializers.ModelSerializer):
 
 
 class ReviewDetailSerializer(serializers.ModelSerializer):
+    from snu_student.serializers import UserSerializer
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by = serializers.SerializerMethodField()
 
@@ -71,6 +71,7 @@ class ReviewDetailSerializer(serializers.ModelSerializer):
 
 
 class CommentListSerializer(serializers.ModelSerializer):
+    from snu_student.serializers import UserSerializer
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by = serializers.SerializerMethodField()
     CONTENT_LENGTH_LIMIT = 300
@@ -89,6 +90,7 @@ class CommentListSerializer(serializers.ModelSerializer):
 
 
 class CommentDetailSerializer(serializers.ModelSerializer):
+    from snu_student.serializers import UserSerializer
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by = serializers.SerializerMethodField()
 
@@ -98,4 +100,3 @@ class CommentDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'created_by', 'content', 'review', 'created_at', 'is_updated', 'updated_at']
-
