@@ -326,3 +326,147 @@
         request : {}
         response : 204 No Content
         ```
+
+- Interest
+
+  - /interest/
+
+    [] GET : header의 토큰 정보를 바탕으로 해당 유저의 관심강좌 목록 조회
+
+       ```
+        request : {}
+        response : {
+		"count": 5,
+		"next": null,
+		"previous": null,
+		"results": [
+			{
+				"id": 1,
+				"name": "사람 뇌의 구조와 기능",
+				"curriculum": "교양",
+				"professor": "정천기",
+				"department": "의학과",
+				"number": "47.019",
+				"class_number": 2,
+				"maximum": 200,
+				"cart": 2,
+				"current": 130,
+				"time": "",
+				"credit": 3,
+				"rate": null
+			},
+			{
+				"id": 2,
+				"name": "의학통계론",
+				"curriculum": "전선",
+				"professor": "한서경",
+				"department": "의학과",
+				"number": "801.502",
+				"class_number": 1,
+				"maximum": 100,
+				"cart": 81,
+				"current": 77,
+				"time": "수(18:00~20:50)",
+				"credit": 3,
+				"rate": null
+			},
+			...
+		]
+	}
+       ```
+
+    [] POST : header의 토큰 정보를 바탕으로 해당 유저에게 관심강좌 추가
+    
+        ```
+	request : {
+		"number": "32.079",
+		"class_number": 1
+	}
+        response : {
+		"id": 4750,
+		"name": "라틴어 1",
+		"curriculum": "교양",
+		"professor": "양호영",
+		"department": "협동과정  서양고전학전공",
+		"number": "32.079",
+		"class_number": 1,
+		"maximum": 40,
+		"cart": 87,
+		"current": 46,
+		"time": "월(15:30~16:45)/수(15:30~16:45)",
+		"credit": 3,
+		"rate": null
+	}
+        ```
+
+- Cart
+
+  - /cart/
+
+    [] GET : header의 토큰 정보를 바탕으로 해당 유저의 장바구니 목록 조회
+
+       ```
+        request : {}
+        response : {
+		"count": 5,
+		"next": null,
+		"previous": null,
+		"results": [
+			{
+				"id": 1,
+				"name": "사람 뇌의 구조와 기능",
+				"curriculum": "교양",
+				"professor": "정천기",
+				"department": "의학과",
+				"number": "47.019",
+				"class_number": 2,
+				"maximum": 200,
+				"cart": 2,
+				"current": 130,
+				"time": "",
+				"credit": 3,
+				"rate": null
+			},
+			{
+				"id": 2,
+				"name": "의학통계론",
+				"curriculum": "전선",
+				"professor": "한서경",
+				"department": "의학과",
+				"number": "801.502",
+				"class_number": 1,
+				"maximum": 100,
+				"cart": 81,
+				"current": 77,
+				"time": "수(18:00~20:50)",
+				"credit": 3,
+				"rate": null
+			},
+			...
+		]
+	}
+       ```
+
+    [] POST : header의 토큰 정보를 바탕으로 해당 유저에게 장바구니 강좌 추가
+    
+        ```
+	request : {
+		"number": "32.079",
+		"class_number": 1
+	}
+        response : {
+		"id": 4750,
+		"name": "라틴어 1",
+		"curriculum": "교양",
+		"professor": "양호영",
+		"department": "협동과정  서양고전학전공",
+		"number": "32.079",
+		"class_number": 1,
+		"maximum": 40,
+		"cart": 87,
+		"current": 46,
+		"time": "월(15:30~16:45)/수(15:30~16:45)",
+		"credit": 3,
+		"rate": null
+	}
+        ```
