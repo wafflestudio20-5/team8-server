@@ -19,6 +19,7 @@ from rest_framework import generics, status
 from .models import User, UserToCourse
 from .serializers import UserSerializer, RegistrationSerializer, LoginSerializer, UserToCourseSerializer
 from rest_framework import serializers
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -104,6 +105,14 @@ class BaseCourseAPIView(mixins.ListModelMixin,
     def get_queryset(self):
         user = self.request.user.id
         return UserToCourse.objects.filter(user=user, sort=self.sort)
+
+    def get_object(self):
+        user = self.request.user.id
+        return get_object_or_404(UserToCourse,
+                                 user=user,
+                                 course__number=self.request.data['number'],
+                                 course__class_number=self.request.data['class_number'],
+                                 sort=self.sort)
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
