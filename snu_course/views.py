@@ -17,8 +17,7 @@ class CourseListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsSafeOrAuthorizedUser]
     pagination_class = CoursePagination
 
-    def get_searched_queryset(self, **kwargs):
-        print(kwargs)
+    def get_queryset(self, **kwargs):
         parameters = {
             'grade': 'grade',
             'degree': 'degree',
@@ -28,13 +27,10 @@ class CourseListCreateView(generics.ListCreateAPIView):
             'name__contains': 'keyword',
         }
 
-        if not kwargs:
-            return Course.objects.all()
+        kwargs = {key: self.request.data.get(value) for key, value in parameters.items() if self.request.data.get(value)}
+        queryset = Course.objects.filter(**kwargs)
 
-        print({key: kwargs.get(value) for key, value in parameters if kwargs.get(value)})
-        queryset = Course.objects.filter(**{key: kwargs.get(value) for key, value in parameters if kwargs.get(value)})
-
-        exception = self.request.GET.get('exception')
+        exception = self.request.data.get('exception')
         if exception:
             q = Q()
             for exception_keyword in exception.split(','):
@@ -42,18 +38,6 @@ class CourseListCreateView(generics.ListCreateAPIView):
             queryset = queryset.exclude(q)
 
         return queryset
-
-    def get(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_searched_queryset(**kwargs))
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-
-        return Response(serializer.data)
 
 
 class CourseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
