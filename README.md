@@ -9,14 +9,27 @@
 
 ```
 request : {
-    "email" : "test@test.com",
-    "name" : "testUser",
-    "password" : "password"
+	"email" : "test@test.com",
+	"name" : "testUser",
+	"password" : "password",
+	"student_id": "",
+	"college": "",
+	"department": "",
+	"program": "",
+	"academic_year": 1,
+	"year_of_entrance": 1
 }
 response : {
-    "email": "test@test.com",
-	"name": "testUser",
-    "Token" : "eyJ..."
+    "email": "myemail2@snu.ac.kr",
+	"name": "myname",
+	"student_id": "",
+	"college": "",
+	"department": "",
+	"program": "",
+	"academic_year": 2,
+	"year_of_entrance": 3,
+	"token": "eyJ...",
+	"refresh_token": "eyJ..."
 }
 ```
 
@@ -31,8 +44,27 @@ request : {
 }
 response : {
 	"email": "test@test.com",
-    "last_login": "2023-01-04 15:29:53.282981+00:00",
-    "token": "eyJ..."
+	"last_login": "2023-01-12 06:52:34.751485+00:00",
+	"token": "eyJ...",
+	"refresh_token": "eyJ..."
+}
+```
+
+ - /user/current/
+
+    [] GET : user의 마이페이지 정보를 get
+
+```
+request : {}
+response : {
+	"email": "a@example.com",
+	"name": "a",
+	"student_id": "",
+	"college": "",
+	"department": "",
+	"program": "",
+	"academic_year": 1,
+	"year_of_entrance": 1
 }
 ```
 
