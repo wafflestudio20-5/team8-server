@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db.models import Q
 
-from snu_student.models import User
+from snu_student.models import User, UserToCourse
 
 DAYS_OF_WEEK = (
     ('MON', 'Monday'),
@@ -28,15 +28,21 @@ class Course(models.Model):
     number = models.CharField(max_length=100)
     class_number = models.IntegerField(validators=[class_number_validator])
     maximum = models.IntegerField()
-    current = models.IntegerField(default=0, blank=True)
     time = models.CharField(default='', max_length=100, blank=True)
     credit = models.IntegerField(validators=[MinValueValidator(1)])
     lecture = models.IntegerField()
     lab = models.IntegerField()
     form = models.CharField(default='', max_length=100, blank=True)
     classroom = models.CharField(default='', max_length=100, blank=True)
-    cart = models.IntegerField(default=0, blank=True)
     # parsed_time
+
+    @property
+    def cart(self):
+        return UserToCourse.objects.filter(course=self, sort='C').count()
+
+    @property
+    def current(self):
+        return UserToCourse.objects.filter(course=self, sort='R').count()
 
     def can_insert_into(self, course_list):
         if not course_list: return True

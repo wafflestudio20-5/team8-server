@@ -5,7 +5,7 @@ from allauth.socialaccount.providers.naver.views import NaverOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from rest_auth.registration.serializers import SocialLoginSerializer
 from rest_auth.registration.views import SocialLoginView
-from rest_framework import generics, status
+from rest_framework import generics, status, mixins
 from django.shortcuts import render
 from rest_framework.generics import RetrieveUpdateAPIView, ListAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -19,6 +19,7 @@ from rest_framework import generics, status
 from .models import User, UserToCourse
 from .serializers import UserSerializer, RegistrationSerializer, LoginSerializer, UserToCourseSerializer
 from rest_framework import serializers
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -88,7 +89,10 @@ class UserRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class BaseCourseAPIView(generics.ListCreateAPIView):
+class BaseCourseAPIView(mixins.ListModelMixin,
+                        mixins.CreateModelMixin,
+                        mixins.DestroyModelMixin,
+                        generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserToCourseSerializer
     sort = None
@@ -101,6 +105,23 @@ class BaseCourseAPIView(generics.ListCreateAPIView):
     def get_queryset(self):
         user = self.request.user.id
         return UserToCourse.objects.filter(user=user, sort=self.sort)
+
+    def get_object(self):
+        user = self.request.user.id
+        return get_object_or_404(UserToCourse,
+                                 user=user,
+                                 course__number=self.request.data['number'],
+                                 course__class_number=self.request.data['class_number'],
+                                 sort=self.sort)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 class InterestCourseAPIView(BaseCourseAPIView):
