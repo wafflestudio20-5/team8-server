@@ -14,14 +14,15 @@ SORTS_OF_COURSE = (
 )
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, name, password=None):
+    def create_user(self, email, name, password=None, **extra_fields):
         if not email:
             raise ValueError('must have user email')
         if not name:
             raise ValueError('must have user name')
         user = self.model(
             email=self.normalize_email(email),
-            name=name
+            name=name,
+            **extra_fields
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -37,6 +38,7 @@ class UserManager(BaseUserManager):
         user.is_staff = True
         user.save(using=self._db)
         return user
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     student_id_validator = RegexValidator(regex=r'^([0-9]{4})-([0-9]{5})$')

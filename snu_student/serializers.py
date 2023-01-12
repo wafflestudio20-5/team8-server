@@ -103,6 +103,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'email',
             'name',
             'password',
+            'student_id',
+            'college',
+            'department',
+            'program',
+            'academic_year',
+            'year_of_entrance',
             'token',
             'refresh_token'
         ]
