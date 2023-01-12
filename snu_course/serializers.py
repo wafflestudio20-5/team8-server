@@ -6,16 +6,20 @@ from rest_framework import serializers
 class CourseListSerializer(serializers.ModelSerializer):
     rate = serializers.SerializerMethodField()
     id = serializers.PrimaryKeyRelatedField(read_only=True)
+    parsed_time = serializers.SerializerMethodField()
 
     def get_rate(self, obj):
         return obj.review_set.all().aggregate(Avg('rate'))['rate__avg']
+
+    def get_parsed_time(self, obj):
+        return obj.timeinfo_set.values("day", "start_time", "end_time")
 
     class Meta:
         model = Course
         fields = (
             "id", "name", "curriculum", "professor",
             "department", "number", "class_number", "maximum",
-            "cart", "current", "time", "credit", "rate")
+            "cart", "current", "time", "credit", "rate", "parsed_time")
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):
