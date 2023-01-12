@@ -40,6 +40,43 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
+class UserDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            'email',
+            'name',
+            'student_id',
+            'college',
+            'department',
+            'program',
+            'academic_year',
+            'year_of_entrance'
+        ]
+        read_only_fields = ('email',
+            'name',
+            'student_id',
+            'college',
+            'department',
+            'program',
+            'academic_year',
+            'year_of_entrance'
+        )
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+
+        for (key, value) in validated_data.items():
+            setattr(instance, key, value)
+
+        if password is not None:
+            instance.set_password(password)
+
+        instance.save()
+        return instance
+
+
 class UserReadonlySerializer(serializers.ModelSerializer):
     class Meta:
         model = User
