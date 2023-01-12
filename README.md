@@ -508,3 +508,94 @@ response : {
 	"rate": null
 }
 ```
+
+- Registered
+
+  - /registered/
+
+    [] GET : header의 토큰 정보를 바탕으로 해당 유저의 수강신청 목록 조회
+
+```
+request : {}
+response : {
+	"count": 5,
+	"next": null,
+	"previous": null,
+	"results": [
+		{
+			"id": 1827,
+			"name": "수학연습 2",
+			"curriculum": "교양",
+			"professor": "서인석",
+			"department": "수리과학부",
+			"number": "L0442.000400",
+			"class_number": 1,
+			"maximum": 25,
+			"cart": 30,
+			"current": 27,
+			"time": "금(10:00~11:50)",
+			"credit": 1,
+			"rate": null,
+			"parsed_time": [
+				{
+					"day": "FRI",
+					"start_time": "10:00:00",
+					"end_time": "11:50:00"
+				}
+			]
+		},
+		{
+			"id": 4750,
+			"name": "라틴어 1",
+			"curriculum": "교양",
+			"professor": "양호영",
+			"department": "협동과정  서양고전학전공",
+			"number": "32.079",
+			"class_number": 1,
+			"maximum": 40,
+			"cart": 87,
+			"current": 46,
+			"time": "월(15:30~16:45)/수(15:30~16:45)",
+			"credit": 3,
+			"rate": null,
+			"parsed_time": [
+				{
+					"day": "MON",
+					"start_time": "15:30:00",
+					"end_time": "16:45:00"
+				},
+				{
+					"day": "WED",
+					"start_time": "15:30:00",
+					"end_time": "16:45:00"
+				}
+			]
+		},
+		...
+	]
+}
+```
+
+    [] POST : header의 토큰 정보를 바탕으로 해당 유저에게 수강신청 강좌 추가
+    
+```
+request : {
+	"number": "32.079",
+	"class_number": 1
+}
+response : {
+	"id": 4750,
+	"name": "라틴어 1",
+	"curriculum": "교양",
+	"professor": "양호영",
+	"department": "협동과정  서양고전학전공",
+	"number": "32.079",
+	"class_number": 1,
+	"maximum": 40,
+	"cart": 87,
+	"current": 46,
+	"time": "월(15:30\~16:45)/수(15:30\~16:45)",
+	"credit": 3,
+	"rate": null
+}
+```
