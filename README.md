@@ -506,6 +506,16 @@ response : {
 }
 ```
 
+    [] DELETE : header의 토큰 정보를 바탕으로 해당 유저에게서 관심강좌 삭제
+
+```
+request : {
+	"number": "32.079",
+	"class_number": 1
+}
+response : 204 No Content
+```
+
 - Cart
 
   - /cart/
@@ -597,6 +607,16 @@ response : {
 }
 ```
 
+    [] DELETE : header의 토큰 정보를 바탕으로 해당 유저에게서 장바구니 강좌 삭제
+
+```
+request : {
+	"number": "32.079",
+	"class_number": 1
+}
+response : 204 No Content
+```
+
 - Registered
 
   - /registered/
@@ -686,4 +706,14 @@ response : {
 	"credit": 3,
 	"rate": null
 }
+```
+
+    [] DELETE : header의 토큰 정보를 바탕으로 해당 유저에게서 수강신청 강좌 삭제
+
+```
+request : {
+	"number": "32.079",
+	"class_number": 1
+}
+response : 204 No Content
 ```
