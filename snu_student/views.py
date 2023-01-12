@@ -37,20 +37,18 @@ class LoginAPIView(APIView):
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
 
-        print(serializer.data)
-
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class RefreshApiView(APIView):
+class RefreshApiView(ListAPIView):
     permission_classes = [AllowAny]
     serializer_class = LoginSerializer
     Auth_class = JWTAuthentication
 
     def post(self, request, *args, **kwargs):
         user, token = self.Auth_class.refresh_credentials(request.data['refresh_token'])
-        serializer = self.serializer_class(data=user)
-        serializer.is_valid(raise_exception=True)
+        print(token)
+        serializer = self.get_serializer(user)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
