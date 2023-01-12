@@ -1,3 +1,5 @@
+from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import generics
@@ -11,10 +13,31 @@ from .models import Course, Review, Comment
 
 
 class CourseListCreateView(generics.ListCreateAPIView):
-    queryset = Course.objects.all().prefetch_related('review_set').order_by('name')
     serializer_class = CourseListSerializer
     permission_classes = [IsSafeOrAuthorizedUser]
     pagination_class = CoursePagination
+
+    def get_queryset(self):
+        parameters = {
+            'grade': 'grade',
+            'degree': 'degree',
+            'college': 'college',
+            'department': 'department',
+            'curriculum': 'curriculum',
+            'name__contains': 'keyword',
+        }
+
+        kwargs = {key: self.request.GET.get(value) for key, value in parameters.items() if self.request.GET.get(value)}
+        queryset = Course.objects.filter(**kwargs)
+
+        exception = self.request.GET.get('exception')
+        if exception:
+            q = Q()
+            for exception_keyword in exception.split(','):
+                q |= Q(name__contains=exception_keyword)
+            queryset = queryset.exclude(q)
+
+        return queryset
 
 
 class CourseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):

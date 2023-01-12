@@ -3,6 +3,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from snu_course.models import Course
+from django.shortcuts import get_object_or_404
 from .models import User, UserToCourse
 
 
@@ -116,20 +117,37 @@ class LoginSerializer(serializers.Serializer):
 class UserToCourseSerializer(serializers.ModelSerializer):
     from snu_course.serializers import CourseListSerializer
     course = CourseListSerializer(read_only=True)
-    course_id = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all(), source='course', write_only=True)
+    number = serializers.CharField(write_only=True)
+    class_number = serializers.IntegerField(write_only=True)
 
     def validate(self, attrs):
-        if UserToCourse.objects.filter(course=attrs['course'], user=attrs['user']).exists():
-            raise serializers.ValidationError({'course_id': 'The course is already associated with the user'})
+        user, course, sort = attrs['user'], attrs['course'], attrs['sort']
+
+        if UserToCourse.objects.filter(user=user, course=course, sort=sort).exists():
+            raise serializers.ValidationError(
+                {'course': 'The course is already belongs to the user in the category'})
+        if sort != 'I' and UserToCourse.objects.filter(user=user, course__number=course.number, sort=sort).exists():
+            raise serializers.ValidationError(
+                {'course': 'The same course is already belongs to the user in the category'})
+        if sort == 'C' and user.cart_credits + course.credit > 21:
+            raise serializers.ValidationError(
+                {'course': 'Total cart credits cannot exceed 21'})
+        if sort == 'R' and user.registration_credits + course.credit > 21:
+            raise serializers.ValidationError(
+                {'course': 'Total registration cannot credits exceed 21'})
+        if sort != 'I' and not course.can_insert_into(UserToCourse.objects.filter(user=user, sort=sort).values_list('course')):
+            raise serializers.ValidationError(
+                {'course': 'Course time overlapped'})
+
         return attrs
 
     def to_representation(self, instance):
         return super().to_representation(instance)['course']
 
     def to_internal_value(self, data):
-        internal_value = super().to_internal_value(data)
-        return {**internal_value, 'user': self.context['request'].user, 'sort': self.context['sort']}
+        course = get_object_or_404(Course, number=data['number'], class_number=data['class_number'])
+        return {'user': self.context['request'].user, 'course': course, 'sort': self.context['sort']}
 
     class Meta:
         model = UserToCourse
-        fields = ['course', 'course_id']
+        fields = ['course', 'number', 'class_number']

@@ -4,7 +4,7 @@ import jwt
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
-
+from django.db.models import Sum, F
 
 SORTS_OF_COURSE = (
     ('I', 'interest'),
@@ -67,6 +67,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
+
+    @property
+    def cart_credits(self):
+        ret = UserToCourse.objects.filter(user=self, sort='C').aggregate(Sum(F('course__credit')))['course__credit__sum']
+        return ret if ret else 0
+
+    @property
+    def registration_credits(self):
+        ret = UserToCourse.objects.filter(user=self, sort='R').aggregate(Sum(F('course__credit')))['course__credit__sum']
+        return ret if ret else 0
 
     @property
     def token(self):

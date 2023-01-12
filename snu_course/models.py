@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, RegexValidator
+from django.db.models import Q
 
 from snu_student.models import User
 
@@ -36,6 +37,14 @@ class Course(models.Model):
     classroom = models.CharField(default='', max_length=100, blank=True)
     cart = models.IntegerField(default=0, blank=True)
     # parsed_time
+
+    def can_insert_into(self, course_list):
+        if not course_list: return True
+        q = Q()
+        for course in course_list:
+            for timeinfo in self.timeinfo_set.all():
+                q |= Q(course=course, day=timeinfo.day, start_time__lt=timeinfo.end_time, end_time__gt=timeinfo.start_time)
+        return not TimeInfo.objects.filter(q).exists()
 
 
 class TimeInfo(models.Model):
