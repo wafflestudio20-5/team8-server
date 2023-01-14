@@ -13,21 +13,25 @@ from .models import Course, Review, Comment
 
 
 class CourseListCreateView(generics.ListCreateAPIView):
+    SEARCH_PARAMETERS = {
+        'grade': 'grade',
+        'degree': 'degree',
+        'college': 'college',
+        'department': 'department',
+        'curriculum': 'curriculum',
+        'keyword': 'name__contains',
+        'exception': None,
+    }
+
     serializer_class = CourseListSerializer
     permission_classes = [IsSafeOrAuthorizedUser]
     pagination_class = CoursePagination
 
-    def get_queryset(self, **kwargs):
-        parameters = {
-            'grade': 'grade',
-            'degree': 'degree',
-            'college': 'college',
-            'department': 'department',
-            'curriculum': 'curriculum',
-            'name__contains': 'keyword',
-        }
-
-        kwargs = {key: self.request.data.get(value) for key, value in parameters.items() if self.request.data.get(value)}
+    def get_queryset(self):
+        kwargs = {key: self.request.GET.get(attr)
+                  for attr, key in self.SEARCH_PARAMETERS.items()
+                  if self.request.GET.get(attr)
+                  if key}
         queryset = Course.objects.filter(**kwargs)
 
         exception = self.request.data.get('exception')
@@ -38,6 +42,13 @@ class CourseListCreateView(generics.ListCreateAPIView):
             queryset = queryset.exclude(q)
 
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        response.data.update({attr: self.request.GET.get(attr)
+                              for attr in self.SEARCH_PARAMETERS
+                              if self.request.GET.get(attr)})
+        return response
 
 
 class CourseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
