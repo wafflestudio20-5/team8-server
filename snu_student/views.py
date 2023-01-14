@@ -129,6 +129,7 @@ class InterestCourseAPIView(BaseCourseAPIView):
 
 
 class CartCourseAPIView(BaseCourseAPIView):
+    permission_classes = [IsAuthenticated]
     sort = 'C'
 
 

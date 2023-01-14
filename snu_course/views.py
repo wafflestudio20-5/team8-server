@@ -34,7 +34,7 @@ class CourseListCreateView(generics.ListCreateAPIView):
                   if key}
         queryset = Course.objects.filter(**kwargs)
 
-        exception = self.request.GET.get('exception')
+        exception = self.request.data.get('exception')
         if exception:
             q = Q()
             for exception_keyword in exception.split(','):
