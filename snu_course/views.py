@@ -18,7 +18,7 @@ class CourseListCreateView(generics.ListCreateAPIView):
         'degree': 'degree',
         'college': 'college',
         'department': 'department',
-        'curriculum': 'curriculum',
+        'curriculum': None,
         'keyword': 'name__contains',
         'exception': None,
     }
@@ -34,11 +34,15 @@ class CourseListCreateView(generics.ListCreateAPIView):
                   if key}
         queryset = Course.objects.filter(**kwargs)
 
-        exception = self.request.data.get('exception')
-        if exception:
+        curriculums = self.request.GET.get('curriculum')
+        if curriculums:
+            queryset = queryset.filter(curriculum__in=curriculums.split(','))
+
+        exceptions = self.request.data.get('exception')
+        if exceptions:
             q = Q()
-            for exception_keyword in exception.split(','):
-                q |= Q(name__contains=exception_keyword)
+            for exception in exceptions.split(','):
+                q |= Q(name__contains=exception)
             queryset = queryset.exclude(q)
 
         return queryset
