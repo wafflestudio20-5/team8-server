@@ -174,8 +174,7 @@ class LoginSerializer(serializers.Serializer):
 class UserToCourseSerializer(serializers.ModelSerializer):
     from snu_course.serializers import CourseListSerializer
     course = CourseListSerializer(read_only=True)
-    number = serializers.CharField(write_only=True)
-    class_number = serializers.IntegerField(write_only=True)
+    id = serializers.IntegerField(write_only=True)
 
     def validate(self, attrs):
         user, course, sort = attrs['user'], attrs['course'], attrs['sort']
@@ -202,9 +201,9 @@ class UserToCourseSerializer(serializers.ModelSerializer):
         return super().to_representation(instance)['course']
 
     def to_internal_value(self, data):
-        course = get_object_or_404(Course, number=data['number'], class_number=data['class_number'])
+        course = get_object_or_404(Course, id=data['id'])
         return {'user': self.context['request'].user, 'course': course, 'sort': self.context['sort']}
 
     class Meta:
         model = UserToCourse
-        fields = ['course', 'number', 'class_number']
+        fields = ['course', 'id']

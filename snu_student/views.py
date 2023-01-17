@@ -110,8 +110,7 @@ class BaseCourseAPIView(mixins.ListModelMixin,
         user = self.request.user.id
         return get_object_or_404(UserToCourse,
                                  user=user,
-                                 course__number=self.request.data['number'],
-                                 course__class_number=self.request.data['class_number'],
+                                 course__id=self.request.data['id'],
                                  sort=self.sort)
 
     def get(self, request, *args, **kwargs):
