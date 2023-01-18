@@ -181,19 +181,19 @@ class UserToCourseSerializer(serializers.ModelSerializer):
 
         if UserToCourse.objects.filter(user=user, course=course, sort=sort).exists():
             raise serializers.ValidationError(
-                {'course': 'The course is already belongs to the user in the category'})
+                {'course': '이미 등록한 강좌입니다.'})
         if sort != 'I' and UserToCourse.objects.filter(user=user, course__number=course.number, sort=sort).exists():
             raise serializers.ValidationError(
-                {'course': 'The same course is already belongs to the user in the category'})
+                {'course': '같은 교과목의 분반이 다른 강좌를 이미 등록하였습니다.'})
         if sort == 'C' and user.cart_credits + course.credit > 21:
             raise serializers.ValidationError(
-                {'course': 'Total cart credits cannot exceed 21'})
+                {'course': '장바구니 신청 가능 학점 수(21)를 초과하였습니다.'})
         if sort == 'R' and user.registration_credits + course.credit > 21:
             raise serializers.ValidationError(
-                {'course': 'Total registration cannot credits exceed 21'})
+                {'course': '수강신청 가능 학점 수(21)를 초과하였습니다.'})
         if sort != 'I' and not course.can_insert_into(UserToCourse.objects.filter(user=user, sort=sort).values_list('course')):
             raise serializers.ValidationError(
-                {'course': 'Course time overlapped'})
+                {'course': '이미 등록한 강좌 중 수업시간이 겹치는 강좌가 있습니다.'})
 
         return attrs
 
