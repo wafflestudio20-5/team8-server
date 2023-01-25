@@ -18,8 +18,8 @@ class CourseListSerializer(serializers.ModelSerializer):
         model = Course
         fields = (
             "id", "name", "curriculum", "professor", "degree",
-            "department", "number", "class_number", "maximum",
-            "cart", "current", "time", "credit", "rate", "parsed_time")
+            "department", "number", "class_number", "maximum", "interest",
+            "cart", "current", "time", "credit", "rate", "parsed_time", "pending")
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):
