@@ -1,11 +1,13 @@
 from django.db.models import Count, F
 from django.http import HttpResponse
+from rest_framework import generics
 
 from snu_course.models import Course
 from snu_student.models import UserToCourse
 from team8_server.constants import CourseSorts
 from .constants import Periods
 from .models import ServerState
+from .serializers import ServerStateSerializer
 
 
 def change_period(request):
@@ -32,3 +34,11 @@ def confirm(request):
     queryset = Course.objects.filter(id__in=pending_courses)
     queryset.update(pending=True)
     return HttpResponse(f"{count}개의 강좌가 장바구니 보류강좌로 전환되었습니다.")
+
+
+class StateDetail(generics.RetrieveAPIView):
+    serializer_class = ServerStateSerializer
+    queryset = ServerState.objects.all()
+
+    def get_object(self):
+        return self.queryset.first()
