@@ -36,7 +36,7 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         model = Course
         fields = (
             "name", "curriculum", "professor", "department", "number", "class_number", "maximum",
-            "cart", "current", "time", "credit", "rate", "parsed_time")
+            "cart", "current", "time", "credit", "rate", "parsed_time", "pending")
 
 
 class ReviewListSerializer(serializers.ModelSerializer):
