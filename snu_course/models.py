@@ -39,6 +39,10 @@ class Course(models.Model):
     # parsed_time
 
     @property
+    def interest(self):
+        return UserToCourse.objects.filter(course=self, sort=CourseSorts.INTEREST).count()
+
+    @property
     def cart(self):
         return UserToCourse.objects.filter(course=self, sort=CourseSorts.CART).count()
 
