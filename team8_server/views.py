@@ -29,11 +29,19 @@ def confirm(request):
         .annotate(Count('user')) \
         .filter(course__pending=False, user__count__gt=F('course__maximum')) \
         .values_list('course', flat=True)
-    count = pending_courses.count()
+    pending_count = pending_courses.count()
 
-    queryset = Course.objects.filter(id__in=pending_courses)
-    queryset.update(pending=True)
-    return HttpResponse(f"{count}개의 강좌가 장바구니 보류강좌로 전환되었습니다.")
+    registered_courses = UserToCourse.objects \
+        .filter(sort=CourseSorts.CART) \
+        .values('course') \
+        .annotate(Count('user')) \
+        .filter(course__pending=False, user__count__lte=F('course__maximum'))
+    registered_count = registered_courses.count()
+
+    Course.objects.filter(id__in=pending_courses).update(pending=True)
+    registered_courses.update(sort=CourseSorts.REGISTERED)
+
+    return HttpResponse(f"{pending_count}개의 강좌가 장바구니 보류강좌로 전환되었습니다.<br>{registered_count}개의 강좌가 장바구니 확정되어 수강신청되었습니다.")
 
 
 class StateDetail(generics.RetrieveAPIView):
