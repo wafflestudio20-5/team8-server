@@ -20,6 +20,7 @@ from .models import User, UserToCourse
 from .serializers import UserSerializer, RegistrationSerializer, LoginSerializer, UserToCourseSerializer
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
+from snu_course.pagination import UserToCoursePagination
 
 # Create your views here.
 
@@ -95,6 +96,7 @@ class BaseCourseAPIView(mixins.ListModelMixin,
                         generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserToCourseSerializer
+    pagination_class = UserToCoursePagination
     sort = None
 
     def get_serializer_context(self):
