@@ -45,7 +45,7 @@ class Course(models.Model):
         return UserToCourse.objects.filter(course=self, sort='R').count()
 
     def can_insert_into(self, course_list):
-        if not course_list: return True
+        if not course_list or not course_list.exists() or not self.timeinfo_set.exists() : return True
         q = Q()
         for course in course_list:
             for timeinfo in self.timeinfo_set.all():

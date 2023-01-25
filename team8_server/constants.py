@@ -20,3 +20,5 @@ class CourseSorts(Enum):
     INTEREST = 0
     CART = 1
     REGISTERED = 2
+    TIME_TABLE = {3, 4, 5}
+

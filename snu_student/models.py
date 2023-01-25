@@ -67,7 +67,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def cart_credits(self):
-        ret = UserToCourse.objects.filter(user=self, sort='C').aggregate(Sum(F('course__credit')))['course__credit__sum']
+        ret = UserToCourse.objects.filter(user=self, sort=CourseSorts.CART).aggregate(Sum(F('course__credit')))['course__credit__sum']
+        return ret if ret else 0
+
+    def timetable_credits(self, sort):
+        if sort not in CourseSorts.TIME_TABLE:
+            raise ValueError('sort must be in CourseSorts.TIME_TABLE')
+        ret = UserToCourse.objects.filter(user=self, sort=sort).aggregate(Sum(F('course__credit')))['course__credit__sum']
         return ret if ret else 0
 
     @property
@@ -108,4 +114,4 @@ class User(AbstractBaseUser, PermissionsMixin):
 class UserToCourse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey('snu_course.Course', on_delete=models.CASCADE)
-    sort = models.CharField(max_length=1, choices=CourseSorts.choices())
+    sort = models.CharField(max_length=1)

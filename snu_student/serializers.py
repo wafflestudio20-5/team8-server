@@ -172,30 +172,74 @@ class LoginSerializer(serializers.Serializer):
         }
 
 
+class UserToCourseValidator:
+    @staticmethod
+    def is_same_course(attrs):
+        user, course, sort = attrs['user'], attrs['course'], attrs['sort']
+        if UserToCourse.objects.filter(user=user, course=course, sort=sort).exists():
+            raise serializers.ValidationError(
+                {'course': '이미 등록한 강좌입니다.'})
+
+    @staticmethod
+    def is_same_course_num(attrs):
+        user, course, sort = attrs['user'], attrs['course'], attrs['sort']
+        if UserToCourse.objects.filter(user=user, course=course, sort=sort).exists():
+            raise serializers.ValidationError(
+                {'course': '같은 교과목의 분반이 다른 강좌를 이미 등록하였습니다.'})
+
+    @staticmethod
+    def is_exceed_cart(attrs):
+        user, course = attrs['user'], attrs['course']
+        if user.cart_credits + course.credit > 21:
+            raise serializers.ValidationError(
+                {'course': '장바구니 신청 가능 학점 수(21)를 초과하였습니다.'})
+        
+    @staticmethod
+    def is_valid_timetable(attrs):
+        sort = attrs['sort']
+        if sort not in CourseSorts.TIME_TABLE:
+            raise serializers.ValidationError(
+                {'course': '유효하지 않은 시간표 번호입니다'})
+
+    @staticmethod
+    def is_exceed_timetable(attrs):
+        user, course, sort = attrs['user'], attrs['course'], attrs['sort']
+        if user.timetable_credits(sort) + course.credit > 21:
+            raise serializers.ValidationError(
+                {'course': '시간표 신청 가능 학점 수(21)를 초과하였습니다.'})
+
+    @staticmethod
+    def is_exceed_registration(attrs):
+        user, course = attrs['user'], attrs['course']
+        if user.registration_credits + course.credit > 21:
+            raise serializers.ValidationError(
+                {'course': '수강신청 가능 학점 수(21)를 초과하였습니다.'})
+
+    @staticmethod
+    def can_insert(attrs):
+        user, course, sort = attrs['user'], attrs['course'], attrs['sort']
+        if not course.can_insert_into(UserToCourse.objects.filter(user=user, sort=sort).values_list('course')):
+            raise serializers.ValidationError(
+                {'course': '이미 등록한 강좌 중 수업시간이 겹치는 강좌가 있습니다.'})
+
+    @staticmethod
+    def is_exceed_max_registrations(attrs):
+        user, course = attrs['user'], attrs['course']
+        if course.current >= course.maximum:
+            raise serializers.ValidationError(
+                {'course': '수강 정원을 초과하였습니다.'})
+    
+
 class UserToCourseSerializer(serializers.ModelSerializer):
     from snu_course.serializers import CourseListSerializer
     course = CourseListSerializer(read_only=True)
     id = serializers.IntegerField(write_only=True)
 
+    validators = []
+
     def validate(self, attrs):
-        user, course, sort = attrs['user'], attrs['course'], attrs['sort']
-
-        if UserToCourse.objects.filter(user=user, course=course, sort=sort).exists():
-            raise serializers.ValidationError(
-                {'course': '이미 등록한 강좌입니다.'})
-        if sort != CourseSorts.INTEREST and UserToCourse.objects.filter(user=user, course__number=course.number, sort=sort).exists():
-            raise serializers.ValidationError(
-                {'course': '같은 교과목의 분반이 다른 강좌를 이미 등록하였습니다.'})
-        if sort == CourseSorts.CART and user.cart_credits + course.credit > 21:
-            raise serializers.ValidationError(
-                {'course': '장바구니 신청 가능 학점 수(21)를 초과하였습니다.'})
-        if sort == CourseSorts.REGISTERED and user.registration_credits + course.credit > 21:
-            raise serializers.ValidationError(
-                {'course': '수강신청 가능 학점 수(21)를 초과하였습니다.'})
-        if sort != CourseSorts.INTEREST and not course.can_insert_into(UserToCourse.objects.filter(user=user, sort=sort).values_list('course')):
-            raise serializers.ValidationError(
-                {'course': '이미 등록한 강좌 중 수업시간이 겹치는 강좌가 있습니다.'})
-
+        for validator in self.validators:
+            validator(attrs)
         return attrs
 
     def to_representation(self, instance):
@@ -208,3 +252,39 @@ class UserToCourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserToCourse
         fields = ['course', 'id']
+
+
+class InterestSerializer(UserToCourseSerializer):
+    validators = [UserToCourseValidator.is_same_course]
+
+
+class CartSerializer(UserToCourseSerializer):
+    validators = [
+        UserToCourseValidator.is_same_course,
+        UserToCourseValidator.is_same_course_num,
+        UserToCourseValidator.is_exceed_cart,
+        UserToCourseValidator.can_insert
+    ]
+
+
+class RegisteredSerializer(UserToCourseSerializer):
+    validators = [
+        UserToCourseValidator.is_same_course,
+        UserToCourseValidator.is_same_course_num,
+        UserToCourseValidator.is_exceed_registration,
+        UserToCourseValidator.is_exceed_max_registrations,
+        UserToCourseValidator.can_insert
+    ]
+
+
+class TimeTableSerializer(UserToCourseSerializer):
+    validators = [
+        UserToCourseValidator.is_same_course,
+        UserToCourseValidator.is_same_course_num,
+        UserToCourseValidator.is_exceed_timetable,
+        UserToCourseValidator.can_insert
+    ]
+
+    def to_internal_value(self, data):
+        course = get_object_or_404(Course, id=data['id'])
+        return {'user': self.context['request'].user, 'course': course, 'sort': self.context['sort']}

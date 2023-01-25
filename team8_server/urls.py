@@ -25,4 +25,5 @@ urlpatterns = [
     path('interest/', views.InterestCourseAPIView.as_view()),
     path('cart/', views.CartCourseAPIView.as_view()),
     path('registered/', views.RegisteredCourseAPIView.as_view()),
+    path('timetable/<int:num>/', views.TimeTableCourseAPIView.as_view()),
 ]
