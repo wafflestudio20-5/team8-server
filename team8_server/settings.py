@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.kakao',
     'allauth.socialaccount.providers.github',
     'corsheaders',
+    'team8_server',
     'snu_course',
     'snu_student',
 ]
