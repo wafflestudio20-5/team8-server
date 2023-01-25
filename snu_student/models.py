@@ -7,11 +7,8 @@ from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 from django.db.models import Sum, F
 
-SORTS_OF_COURSE = (
-    ('I', 'interest'),
-    ('C', 'cart'),
-    ('R', 'registered')
-)
+from team8_server.constants import CourseSorts
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None, **extra_fields):
@@ -111,4 +108,4 @@ class User(AbstractBaseUser, PermissionsMixin):
 class UserToCourse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey('snu_course.Course', on_delete=models.CASCADE)
-    sort = models.CharField(max_length=1, choices=SORTS_OF_COURSE)
+    sort = models.CharField(max_length=1, choices=CourseSorts.choices())

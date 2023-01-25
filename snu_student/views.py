@@ -12,6 +12,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from team8_server.constants import Periods, CourseSorts
+from team8_server.permissions import IsPeriod
 from .backends import JWTAuthentication
 from .serializers import UserSerializer, RegistrationSerializer, LoginSerializer, UserDetailSerializer
 from .models import User
@@ -126,13 +128,14 @@ class BaseCourseAPIView(mixins.ListModelMixin,
 
 
 class InterestCourseAPIView(BaseCourseAPIView):
-    sort = 'I'
+    sort = CourseSorts.INTEREST
 
 
 class CartCourseAPIView(BaseCourseAPIView):
-    permission_classes = [IsAuthenticated]
-    sort = 'C'
+    sort = CourseSorts.CART
+    permission_classes = BaseCourseAPIView.permission_classes + [IsPeriod(Periods.CART)]
 
 
 class RegisteredCourseAPIView(BaseCourseAPIView):
-    sort = 'R'
+    sort = CourseSorts.REGISTERED
+    permission_classes = BaseCourseAPIView.permission_classes + [IsPeriod(Periods.REGISTRATION)]

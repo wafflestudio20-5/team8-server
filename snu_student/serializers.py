@@ -5,6 +5,7 @@ from rest_framework import serializers
 from snu_course.models import Course
 from django.shortcuts import get_object_or_404
 from .models import User, UserToCourse
+from team8_server.constants import CourseSorts
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -182,16 +183,16 @@ class UserToCourseSerializer(serializers.ModelSerializer):
         if UserToCourse.objects.filter(user=user, course=course, sort=sort).exists():
             raise serializers.ValidationError(
                 {'course': '이미 등록한 강좌입니다.'})
-        if sort != 'I' and UserToCourse.objects.filter(user=user, course__number=course.number, sort=sort).exists():
+        if sort != CourseSorts.INTEREST and UserToCourse.objects.filter(user=user, course__number=course.number, sort=sort).exists():
             raise serializers.ValidationError(
                 {'course': '같은 교과목의 분반이 다른 강좌를 이미 등록하였습니다.'})
-        if sort == 'C' and user.cart_credits + course.credit > 21:
+        if sort == CourseSorts.CART and user.cart_credits + course.credit > 21:
             raise serializers.ValidationError(
                 {'course': '장바구니 신청 가능 학점 수(21)를 초과하였습니다.'})
-        if sort == 'R' and user.registration_credits + course.credit > 21:
+        if sort == CourseSorts.REGISTERED and user.registration_credits + course.credit > 21:
             raise serializers.ValidationError(
                 {'course': '수강신청 가능 학점 수(21)를 초과하였습니다.'})
-        if sort != 'I' and not course.can_insert_into(UserToCourse.objects.filter(user=user, sort=sort).values_list('course')):
+        if sort != CourseSorts.INTEREST and not course.can_insert_into(UserToCourse.objects.filter(user=user, sort=sort).values_list('course')):
             raise serializers.ValidationError(
                 {'course': '이미 등록한 강좌 중 수업시간이 겹치는 강좌가 있습니다.'})
 
