@@ -826,3 +826,25 @@ request : {
 }
 response : 204 No Content
 ```
+
+- 서버 상태
+
+  - GET /state/
+  - response
+    - period: 서버의 현재 기간
+    
+| period | 기간        |
+|--------|-----------|
+| 0      | 수강신청 시작 전 |
+| 1      | 장바구니 신청   |
+| 2      | 장바구니 확정   |
+| 3      | 수강신청      |
+| 4      | 개강        |
+
+
+```
+request : {}
+response : {
+	"period": 1
+}
+```
