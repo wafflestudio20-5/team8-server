@@ -1,10 +1,3 @@
-from allauth.socialaccount.providers.github.views import GitHubOAuth2Adapter
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
-from allauth.socialaccount.providers.naver.views import NaverOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from rest_auth.registration.serializers import SocialLoginSerializer
-from rest_auth.registration.views import SocialLoginView
 from rest_framework import generics, status, mixins
 from django.shortcuts import render
 from rest_framework.generics import RetrieveUpdateAPIView, ListAPIView
@@ -15,11 +8,10 @@ from rest_framework.views import APIView
 from team8_server.constants import Periods, CourseSorts
 from team8_server.permissions import IsPeriod
 from .backends import JWTAuthentication
-from .serializers import UserSerializer, RegistrationSerializer, LoginSerializer, UserDetailSerializer
 from .models import User
 from rest_framework import generics, status
 from .models import User, UserToCourse
-from .serializers import UserSerializer, RegistrationSerializer, LoginSerializer, UserToCourseSerializer
+from .serializers import *
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 from snu_course.pagination import UserToCoursePagination
@@ -129,13 +121,31 @@ class BaseCourseAPIView(mixins.ListModelMixin,
 
 class InterestCourseAPIView(BaseCourseAPIView):
     sort = CourseSorts.INTEREST
+    serializer_class = InterestSerializer
 
 
 class CartCourseAPIView(BaseCourseAPIView):
     sort = CourseSorts.CART
     permission_classes = BaseCourseAPIView.permission_classes + [IsPeriod(Periods.CART)]
+    serializer_class = CartSerializer
 
 
 class RegisteredCourseAPIView(BaseCourseAPIView):
     sort = CourseSorts.REGISTERED
     permission_classes = BaseCourseAPIView.permission_classes + [IsPeriod(Periods.REGISTRATION)]
+    serializer_class = RegisteredSerializer
+
+
+class TimeTableCourseAPIView(BaseCourseAPIView):
+    sort_list = CourseSorts.TIME_TABLE
+    permission_classes = BaseCourseAPIView.permission_classes
+    serializer_class = TimeTableSerializer
+
+    def get_queryset(self):
+        self.sort = self.kwargs['num']
+        return super().get_queryset()
+
+    def get_serializer_context(self):
+        if self.sort not in self.sort_list:
+            raise serializers.ValidationError('invalid timetable')
+        return super().get_serializer_context()
