@@ -131,10 +131,12 @@ class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CommentListCreateView(generics.ListCreateAPIView):
-    queryset = Comment.objects.all().order_by('-created_at')
     serializer_class = CommentListSerializer
     permission_classes = [IsSafeOrAuthorizedUser]
     pagination_class = CommentPagination
+
+    def get_queryset(self):
+        return Comment.objects.filter(review=self.kwargs['rid']).order_by('-created_at')
 
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -170,7 +172,7 @@ class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsCreator]
 
     def get_object(self):
-        obj = get_object_or_404(Comment, id=self.kwargs['cid'])
+        obj = get_object_or_404(Comment, id=self.kwargs['cid'], review=self.kwargs['rid'])
         self.check_object_permissions(self.request, obj)
         return obj
 
