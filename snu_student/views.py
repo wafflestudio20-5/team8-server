@@ -136,6 +136,16 @@ class RegisteredCourseAPIView(BaseCourseAPIView):
     serializer_class = RegisteredSerializer
 
 
+class PendingListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserToCourseSerializer
+    pagination_class = UserToCoursePagination
+
+    def get_queryset(self):
+        user = self.request.user.id
+        return UserToCourse.objects.filter(user=user, course__pending=True, sort=CourseSorts.CART)
+
+
 class TimeTableCourseAPIView(BaseCourseAPIView):
     sort_list = CourseSorts.TIME_TABLE
     permission_classes = BaseCourseAPIView.permission_classes
