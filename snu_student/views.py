@@ -146,6 +146,7 @@ class TimeTableCourseAPIView(BaseCourseAPIView):
         return super().get_queryset()
 
     def get_serializer_context(self):
+        self.sort = self.kwargs['num']
         if self.sort not in self.sort_list:
             raise serializers.ValidationError('invalid timetable')
         return super().get_serializer_context()

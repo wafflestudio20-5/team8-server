@@ -285,6 +285,4 @@ class TimeTableSerializer(UserToCourseSerializer):
         UserToCourseValidator.can_insert
     ]
 
-    def to_internal_value(self, data):
-        course = get_object_or_404(Course, id=data['id'])
-        return {'user': self.context['request'].user, 'course': course, 'sort': self.context['sort']}
+
