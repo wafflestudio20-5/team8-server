@@ -68,9 +68,11 @@ class CourseRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 class ReviewListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsSafeOrAuthorizedUser]
-    queryset = Review.objects.all().order_by('-created_at')
     serializer_class = ReviewListSerializer
     pagination_class = ReviewPagination
+
+    def get_queryset(self):
+        return Review.objects.filter(course=self.kwargs['id']).order_by('-created_at')
 
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -104,7 +106,7 @@ class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsCreator]
 
     def get_object(self):
-        obj = get_object_or_404(Review, id=self.kwargs['rid'])
+        obj = get_object_or_404(Review, id=self.kwargs['id'])
         self.check_object_permissions(self.request, obj)
         return obj
 
