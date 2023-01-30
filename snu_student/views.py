@@ -53,7 +53,6 @@ class RefreshApiView(ListAPIView):
 
     def post(self, request, *args, **kwargs):
         user, token = self.Auth_class.refresh_credentials(request.data['refresh_token'])
-        print(token)
         serializer = self.get_serializer(user)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -151,12 +150,19 @@ class TimeTableCourseAPIView(BaseCourseAPIView):
     permission_classes = BaseCourseAPIView.permission_classes
     serializer_class = TimeTableSerializer
 
-    def get_queryset(self):
-        self.sort = self.kwargs['num']
-        return super().get_queryset()
-
-    def get_serializer_context(self):
+    def get_sort(self):
         self.sort = self.kwargs['num']
         if self.sort not in self.sort_list:
             raise serializers.ValidationError('invalid timetable')
-        return super().get_serializer_context()
+
+    def get(self, request, *args, **kwargs):
+        self.get_sort()
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.get_sort()
+        return self.create(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.get_sort()
+        return self.destroy(request, *args, **kwargs)
