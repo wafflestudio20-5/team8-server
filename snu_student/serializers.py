@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from snu_course.models import Course
 from django.shortcuts import get_object_or_404
+
 from .models import User, UserToCourse
 from team8_server.constants import CourseSorts
 

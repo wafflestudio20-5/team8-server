@@ -153,7 +153,7 @@ class TimeTableCourseAPIView(BaseCourseAPIView):
     def get_sort(self):
         self.sort = self.kwargs['num']
         if self.sort not in self.sort_list:
-            raise serializers.ValidationError('invalid timetable')
+            raise serializers.ValidationError('유효하지 않은 시간표 번호입니다.')
 
     def get(self, request, *args, **kwargs):
         self.get_sort()
@@ -166,3 +166,35 @@ class TimeTableCourseAPIView(BaseCourseAPIView):
     def delete(self, request, *args, **kwargs):
         self.get_sort()
         return self.destroy(request, *args, **kwargs)
+
+
+class TimeTableInsertAPIView(BaseCourseAPIView):
+    serializer_class = CartSerializer
+    http_method_names = ['post']
+    sort = CourseSorts.CART
+    sort_list = CourseSorts.TIME_TABLE
+
+    def get_queryset(self):
+        user = self.request.user.id
+        return UserToCourse.objects.filter(user=user, sort=self.kwargs['num'])
+
+    def create(self, request_data, *args, **kwargs):
+        serializer = self.get_serializer(data=request_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+    def post(self, request, *args, **kwargs):
+        if self.kwargs['num'] not in self.sort_list:
+            raise serializers.ValidationError('유효하지 않은 시간표 번호입니다.')
+
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+
+        user = self.request.user.id
+        UserToCourse.objects.filter(user=user, sort=CourseSorts.CART).delete()
+
+        for data in serializer.data:
+            self.create(data, *args, **kwargs)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
