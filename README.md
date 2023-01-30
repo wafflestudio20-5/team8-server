@@ -624,6 +624,42 @@ request : {
 }
 response : 204 No Content
 ```
+  - /cart/<int:num>
+
+    [] Post : header의 토큰 정보를 바탕으로 해당 유저의 num번 시간표에 속한 강좌들을 모두 장바구니 강좌에 추가. (기존의 장바구니 강좌는 삭제됨)
+
+```
+request : {}
+response : [
+	{
+		"id": 3,
+		"name": "세르반테스와 스페인르네상스문학",
+		"curriculum": "전선",
+		"professor": "김경범",
+		"degree": "석박사통합",
+		"department": "서어서문학과",
+		"number": "107.585",
+		"class_number": 1,
+		"maximum": 5,
+		"interest": 0,
+		"cart": 0,
+		"current": 0,
+		"time": "목(14:00~16:45)",
+		"credit": 3,
+		"rate": 3.5,
+		"parsed_time": [
+			{
+				"day": "THU",
+				"start_time": "14:00:00",
+				"end_time": "16:45:00"
+			}
+		],
+		"pending": false
+	},
+	...
+]
+```
+	
 
 - Registered
 
