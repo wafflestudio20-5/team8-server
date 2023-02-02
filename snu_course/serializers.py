@@ -17,7 +17,7 @@ class CourseListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = (
-            "id", "name", "curriculum", "professor", "degree",
+            "id", "name", "curriculum", "professor", "degree", "college", "grade", "lecture", "lab", "form", "classroom",
             "department", "number", "class_number", "maximum", "interest",
             "cart", "current", "time", "credit", "rate", "parsed_time", "pending")
 
@@ -35,8 +35,9 @@ class CourseDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = (
-            "name", "curriculum", "professor", "department", "number", "class_number", "maximum",
-            "interest", "cart", "current", "time", "credit", "rate", "parsed_time", "pending")
+            "id", "name", "curriculum", "professor", "degree", "college", "grade", "lecture", "lab", "form", "classroom",
+            "department", "number", "class_number", "maximum", "interest",
+            "cart", "current", "time", "credit", "rate", "parsed_time", "pending")
 
 
 class ReviewListSerializer(serializers.ModelSerializer):
