@@ -168,20 +168,7 @@ class CommentListCreateView(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(self.make_anonymous(serializer.data))
-
         serializer = self.get_serializer(queryset, many=True)
-
-        for serialized_comment in serializer.data:
-            if request.user.is_anonymous:
-                serialized_comment['created_by'] = None
-            elif serialized_comment['created_by'] != request.user.name:
-                serialized_comment['created_by'] = None
-
         return Response(self.make_anonymous(serializer.data))
 
     def post(self, request, *args, **kwargs):
