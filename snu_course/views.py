@@ -120,7 +120,7 @@ class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         serialized_review = serializer.data
 
         if request.user.is_anonymous or serialized_review['created_by'] != request.user.name:
-            serialized_review['created_by'] = None
+            serialized_review['created_by'] = "익명 1"
 
         print(serialized_review)
 
@@ -210,7 +210,7 @@ class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         serialized_comment = serializer.data
 
         if request.user.is_anonymous or serialized_comment['created_by'] != request.user.name:
-            serialized_comment['created_by'] = None
+            serialized_comment['created_by'] = "익명"
 
         return Response(serialized_comment)
 
