@@ -106,7 +106,7 @@ class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsCreator]
 
     def get_object(self):
-        obj = get_object_or_404(Review, id=self.kwargs['id'])
+        obj = get_object_or_404(Review, id=self.kwargs['rid'], course=self.kwargs['id'])
         self.check_object_permissions(self.request, obj)
         return obj
 
