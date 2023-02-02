@@ -71,6 +71,12 @@ class ReviewListCreateView(generics.ListCreateAPIView):
     serializer_class = ReviewListSerializer
     pagination_class = ReviewPagination
 
+    def make_anonymous(self, data):
+        for serialized_review in data:
+            if self.request.user.is_anonymous or serialized_review['created_by'] != self.request.user.name:
+                serialized_review['created_by'] = "익명 1"
+        return data
+
     def get_queryset(self):
         return Review.objects.filter(course=self.kwargs['id']).order_by('-created_at')
 
@@ -80,15 +86,12 @@ class ReviewListCreateView(generics.ListCreateAPIView):
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+
+            return self.get_paginated_response(self.make_anonymous(serializer.data))
 
         serializer = self.get_serializer(queryset, many=True)
 
-        for serialized_review in serializer.data:
-            if request.user.is_anonymous or serialized_review['created_by'] != request.user.name:
-                serialized_review['created_by'] = None
-
-        return Response(serializer.data)
+        return Response(self.make_anonymous(serializer.data))
 
     def post(self, request, *args, **kwargs):
         request.data['course'] = kwargs['id']
@@ -119,6 +122,8 @@ class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         if request.user.is_anonymous or serialized_review['created_by'] != request.user.name:
             serialized_review['created_by'] = None
 
+        print(serialized_review)
+
         return Response(serialized_review)
 
     def update(self, request, *args, **kwargs):
@@ -140,13 +145,33 @@ class CommentListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         return Comment.objects.filter(review=self.kwargs['rid']).order_by('-created_at')
 
+    def make_anonymous(self, data):
+        cnt = 1
+        if len(data) == 0:
+            return data
+
+        name_dic = {data[0]['review_created_by']: "익명 " + str(cnt)}
+        cnt += 1
+        for serialized_comment in data:
+            if not self.request.user.is_anonymous and serialized_comment['created_by'] == self.request.user.name:
+                continue
+
+            if serialized_comment['created_by'] not in name_dic:
+                name_dic = {serialized_comment['created_by']: "익명 " + str(cnt)}
+                cnt += 1
+
+            serialized_comment['created_by'] = name_dic[serialized_comment['created_by']]
+        print(name_dic)
+
+        return data
+
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            return self.get_paginated_response(self.make_anonymous(serializer.data))
 
         serializer = self.get_serializer(queryset, many=True)
 
@@ -156,7 +181,7 @@ class CommentListCreateView(generics.ListCreateAPIView):
             elif serialized_comment['created_by'] != request.user.name:
                 serialized_comment['created_by'] = None
 
-        return Response(serializer.data)
+        return Response(self.make_anonymous(serializer.data))
 
     def post(self, request, *args, **kwargs):
         request.data['review'] = kwargs['rid']

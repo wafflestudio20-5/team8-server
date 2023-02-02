@@ -79,9 +79,13 @@ class CommentListSerializer(serializers.ModelSerializer):
     from snu_student.serializers import UserSerializer
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by = serializers.SerializerMethodField()
+    review_created_by = serializers.SerializerMethodField()
     CONTENT_LENGTH_LIMIT = 300
     def get_created_by(self, obj):
         return obj.created_by.name
+
+    def get_review_created_by(self, obj):
+        return obj.review.created_by.name
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -91,7 +95,7 @@ class CommentListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['id', 'created_by', 'content', 'review', 'created_at', 'is_updated']
+        fields = ['id', 'created_by', 'content', 'review', 'created_at', 'is_updated', 'updated_at', 'review_created_by']
 
 
 class CommentDetailSerializer(serializers.ModelSerializer):
