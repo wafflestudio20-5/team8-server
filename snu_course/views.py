@@ -153,6 +153,7 @@ class CommentListCreateView(generics.ListCreateAPIView):
         name_dic = {data[0]['review_created_by']: "익명 " + str(cnt)}
         cnt += 1
         for serialized_comment in data:
+            serialized_comment.pop('review_created_by')
             if not self.request.user.is_anonymous and serialized_comment['created_by'] == self.request.user.name:
                 continue
 
