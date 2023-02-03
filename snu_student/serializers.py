@@ -184,7 +184,7 @@ class UserToCourseValidator:
     @staticmethod
     def is_same_course_num(attrs):
         user, course, sort = attrs['user'], attrs['course'], attrs['sort']
-        if UserToCourse.objects.filter(user=user, course=course, sort=sort).exists():
+        if UserToCourse.objects.filter(user=user, course__number=course.number, sort=sort).exists():
             raise serializers.ValidationError(
                 {'course': '같은 교과목의 분반이 다른 강좌를 이미 등록하였습니다.'})
 
