@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.template import Template, Context
 from rest_framework import generics
 from rest_framework.response import Response
 
@@ -34,9 +35,29 @@ class FileDetailView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
 
-        path_to_file = MEDIA_ROOT + '/' + serializer.data['file']
+        path_to_file = MEDIA_ROOT + '/' + serializer.data['file'][serializer.data['file'].find('/files') + 1:]
+
         f = open(path_to_file, 'rb')
         file = File(f)
         response = HttpResponse(file.read())
         response['Content-Disposition'] = 'attachment; filename="%s"' % serializer.data['name']
         return response
+
+
+class ImageDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = FileDetailSerializer
+    permission_classes = []
+
+    def get_object(self):
+        obj = get_object_or_404(Files, name=self.kwargs['name'])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+    def get(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+
+        path_to_file = MEDIA_ROOT + '/' + serializer.data['file'][serializer.data['file'].find('/files') + 1:]
+
+        html = Template('<img src="{{ PATH_TO_FILE }}" alt="Hi!" />')
+        return HttpResponse(html.render(Context({"PATH_TO_FILE" : path_to_file})))

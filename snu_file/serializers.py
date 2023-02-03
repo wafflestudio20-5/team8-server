@@ -35,11 +35,6 @@ class FileDetailSerializer(serializers.ModelSerializer):
         data['name'] = data['file'].name
         return super().to_internal_value(data)
 
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret['file'] = instance.file.url
-        return ret
-
     class Meta:
         model = Files
         fields = [
