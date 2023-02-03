@@ -18,6 +18,8 @@ from django.urls import path, include
 
 from snu_student import views
 from .views import change_period, confirm, StateDetail
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,4 +36,4 @@ urlpatterns = [
     path('test/period/', change_period),
     path('test/confirm/', confirm),
 #    path('media/file/', views.downloadpdf),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

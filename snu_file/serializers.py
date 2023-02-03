@@ -2,6 +2,13 @@ import os
 from rest_framework import serializers
 from .views import *
 
+class ImagesSerializer(serializers.HyperlinkedModelSerializer):
+    image = serializers.ImageField(use_url=True)
+
+    class Meta:
+        model = Images
+        fields = ('name', 'image')
+
 
 class FileListSerializer(serializers.ModelSerializer):
 

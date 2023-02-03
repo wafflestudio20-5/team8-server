@@ -13,3 +13,7 @@ class Files(models.Model):
     file = models.FileField(upload_to=file_directory_path)
     name = models.CharField(max_length=100, unique=True)
 
+
+class Images(models.Model):
+    name = models.CharField(max_length=100)
+    image = models.ImageField(default='media/default_image.jpeg')
