@@ -136,6 +136,9 @@ class CartCourseAPIView(BaseCourseAPIView):
     permission_classes = BaseCourseAPIView.permission_classes + [IsPeriod(Periods.CART)]
     serializer_class = CartSerializer
 
+    def get_queryset(self):
+        return super().get_queryset().filter(pending=False)
+
 
 class RegisteredCourseAPIView(BaseCourseAPIView):
     sort = CourseSorts.REGISTERED
