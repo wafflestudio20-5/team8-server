@@ -209,4 +209,5 @@ class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return super().update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
+        print(self.get_object())
         return super().delete(request, *args, **kwargs)
