@@ -25,6 +25,7 @@ class FileListView(generics.ListCreateAPIView):
 class FileDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FileDetailSerializer
     permission_classes = []
+    allowed_methods = ['GET']
 
     def get_object(self):
         obj = get_object_or_404(Files, name=self.kwargs['name'])
@@ -35,7 +36,7 @@ class FileDetailView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
 
-        path_to_file = serializer.data['file']#[serializer.data['file'].find('/files') + 1:]
+        path_to_file = MEDIA_ROOT + serializer.data['file'][serializer.data['file'].find('/files') + 1:]
 
         f = open(path_to_file, 'rb')
         file = File(f)
