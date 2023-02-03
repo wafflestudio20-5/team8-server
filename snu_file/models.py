@@ -9,11 +9,16 @@ def file_directory_path(instance, filename):
     return 'files/{0}/{1}/{2}'.format(extension, dtstr, filename)
 
 
+def mnist_directory_path(instance, filename):
+    return 'files/mnist/{0}'.format(filename)
+
+
 class Files(models.Model):
     file = models.FileField(upload_to=file_directory_path)
     name = models.CharField(max_length=100, unique=True)
 
 
-class Images(models.Model):
-    name = models.CharField(max_length=100)
-    image = models.ImageField(default='media/default_image.jpeg')
+class Mnist(models.Model):
+    name = models.CharField(max_length=10)
+    image = models.ImageField(upload_to=mnist_directory_path)
+    label = models.IntegerField(default=0)

@@ -2,16 +2,22 @@ import os
 from rest_framework import serializers
 from .views import *
 
-class ImagesSerializer(serializers.HyperlinkedModelSerializer):
+
+class MnistSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(use_url=True)
 
+    def to_internal_value(self, data):
+        if 'image' not in data:
+            raise serializers.ValidationError('image is required')
+        data['name'] = data['image'].name
+        return super().to_internal_value(data)
+
     class Meta:
-        model = Images
-        fields = ('name', 'image')
+        model = Mnist
+        fields = ('name', 'image', 'label')
 
 
 class FileListSerializer(serializers.ModelSerializer):
-
 #    file = serializers.FileField(write_only=True)
 
     def to_internal_value(self, data):
