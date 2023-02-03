@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from team8_server.settings import BASE_DIR, MEDIA_ROOT
 
+
 class FileListView(generics.ListCreateAPIView):
     permission_classes = []
     queryset = Files.objects.all()
