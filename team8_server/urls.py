@@ -14,13 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from django.views.static import serve
 
 from snu_student import views
 from .views import change_period, confirm, StateDetail
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('files/', include('snu_file.urls')),
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     path('user/', include('snu_student.urls')),
     path('lectures/', include('snu_course.urls')),
     path('interest/', views.InterestCourseAPIView.as_view()),
@@ -30,6 +34,10 @@ urlpatterns = [
     path('state/', StateDetail.as_view()),
     path('timetable/<int:num>/', views.TimeTableCourseAPIView.as_view()),
     path('cart/<int:num>/', views.TimeTableInsertAPIView.as_view()),
-    path('test/period/', change_period),
-    path('test/confirm/', confirm),
+#    path('media/file/', views.downloadpdf),
 ]
+if settings.DEBUG:
+    urlpatterns += [
+        path('test/period/', change_period),
+        path('test/confirm/', confirm),
+        ]

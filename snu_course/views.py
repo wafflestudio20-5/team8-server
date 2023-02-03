@@ -86,8 +86,9 @@ class ReviewListCreateView(generics.ListCreateAPIView):
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
-
-            return self.get_paginated_response(self.make_anonymous(serializer.data))
+            course = Course.objects.get(id=kwargs['id'])
+            return self.paginator.get_paginated_response(self.make_anonymous(serializer.data),
+                                               course = CourseDetailSerializer(course).data)
 
         serializer = self.get_serializer(queryset, many=True)
 
@@ -209,4 +210,5 @@ class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return super().update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
+        print(self.get_object())
         return super().delete(request, *args, **kwargs)
