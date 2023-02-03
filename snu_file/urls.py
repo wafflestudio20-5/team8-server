@@ -3,5 +3,5 @@ from . import views
 
 urlpatterns =[
     path('', views.FileListView.as_view()),
-    path('<path:name>/', views.FileDetailView.as_view()),
+    path('<str:name>/', views.FileDetailView.as_view()),
 ]

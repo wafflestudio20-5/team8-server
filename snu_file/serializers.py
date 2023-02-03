@@ -5,7 +5,7 @@ from .views import *
 
 class FileListSerializer(serializers.ModelSerializer):
 
-    file = serializers.FileField(write_only=True)
+#    file = serializers.FileField(write_only=True)
 
     def to_internal_value(self, data):
         if 'file' not in data:

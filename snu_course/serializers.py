@@ -45,6 +45,7 @@ class ReviewListSerializer(serializers.ModelSerializer):
     CONTENT_LENGTH_LIMIT = 300
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by = serializers.SerializerMethodField()
+    course = CourseDetailSerializer(read_only=True)
 
     def get_created_by(self, obj):
         return obj.created_by.name
