@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('snu_student.urls')),
     path('lectures/', include('snu_course.urls')),
+    path('files/', include('snu_file.urls')),
     path('interest/', views.InterestCourseAPIView.as_view()),
     path('cart/', views.CartCourseAPIView.as_view()),
     path('pending/', views.PendingListView.as_view()),
@@ -32,4 +33,5 @@ urlpatterns = [
     path('cart/<int:num>/', views.TimeTableInsertAPIView.as_view()),
     path('test/period/', change_period),
     path('test/confirm/', confirm),
+#    path('media/file/', views.downloadpdf),
 ]

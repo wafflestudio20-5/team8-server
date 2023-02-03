@@ -15,9 +15,21 @@ from .serializers import *
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 from snu_course.pagination import UserToCoursePagination
+from django.core.files import File
+from django.http import HttpResponse
+from rest_framework.decorators import api_view
+from team8_server.settings import BASE_DIR, MEDIA_ROOT
 
-# Create your views here.
-
+'''
+@api_view(['GET'])
+def downloadpdf(request, *args, **kwargs):
+    path_to_file = MEDIA_ROOT + '/' + kwargs['filename']
+    f = open(path_to_file, 'rb')
+    pdfFile = File(f)
+    response = HttpResponse(pdfFile.read())
+    response['Content-Disposition'] = 'attachment; filename="심리학개론 1장.pdf"' % kwargs['filename']
+    return response
+'''
 
 class RegistrationAPIView(APIView):
     permission_classes = [AllowAny]

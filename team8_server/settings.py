@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'team8_server',
     'snu_course',
     'snu_student',
+    'snu_file',
 ]
 
 MIDDLEWARE = [
