@@ -97,6 +97,8 @@ class ReviewListCreateView(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         request.data['course'] = kwargs['id']
         request.data['created_at'] = timezone.now()
+        if Review.objects.filter(course=kwargs['id'], created_by=request.user).exists():
+            return Response(status=409, data={'message': '이미 리뷰를 작성하셨습니다.'})
 
         return super().post(request, *args, **kwargs)
 
