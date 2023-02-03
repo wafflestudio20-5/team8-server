@@ -123,8 +123,6 @@ class ReviewRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         if request.user.is_anonymous or serialized_review['created_by'] != request.user.name:
             serialized_review['created_by'] = "익명 1"
 
-        print(serialized_review)
-
         return Response(serialized_review)
 
     def update(self, request, *args, **kwargs):
@@ -163,8 +161,6 @@ class CommentListCreateView(generics.ListCreateAPIView):
                 cnt += 1
 
             serialized_comment['created_by'] = name_dic[serialized_comment['created_by']]
-        print(name_dic)
-
         return data
 
     def get(self, request, *args, **kwargs):
@@ -210,5 +206,4 @@ class CommentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return super().update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        print(self.get_object())
         return super().delete(request, *args, **kwargs)
