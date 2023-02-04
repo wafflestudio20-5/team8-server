@@ -137,7 +137,7 @@ class CartCourseAPIView(BaseCourseAPIView):
     serializer_class = CartSerializer
 
     def get_queryset(self):
-        return super().get_queryset().filter(pending=False)
+        return super().get_queryset()
 
 
 class RegisteredCourseAPIView(BaseCourseAPIView):
